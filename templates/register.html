@@ -3,8 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
-<title>Convertly - Se connecter</title>
+<title>Convertly - S'inscrire</title>
 
 <!-- Bootstrap 5 CSS -->
 <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet">
@@ -14,7 +13,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-<link rel="stylesheet" href="login.css">
+<link rel="stylesheet"
+      href="{{ url_for('static', filename='css/register.css') }}">
 </head>
 <body class="auth-body">
 
@@ -30,12 +30,20 @@
       </svg>
     </div>
 
-    <h2 class="auth-title text-center">Se connecter</h2>
+    <h2 class="auth-title text-center">S'inscrire</h2>
     <p class="auth-subtitle text-center">
-      Bienvenue de retour ! Connectez-vous à votre compte pour continuer .
+      Créez votre compte pour commencer a convertir vos fichier facilement .
     </p>
 
     <form>
+      <div class="mb-3">
+        <label class="auth-label">Nom complet</label>
+        <div class="auth-input-group">
+          <i class="bi bi-person"></i>
+          <input type="text" class="form-control" placeholder="Entrez votre nom complet">
+        </div>
+      </div>
+
       <div class="mb-3">
         <label class="auth-label">Adresse e-mail</label>
         <div class="auth-input-group">
@@ -44,33 +52,36 @@
         </div>
       </div>
 
-      <div class="mb-2">
+      <div class="mb-3">
         <label class="auth-label">Mot de passe</label>
         <div class="auth-input-group">
           <i class="bi bi-lock"></i>
-          <input type="password" id="login-password" class="form-control" placeholder="Entrez votre mot de passe">
-          <i class="bi bi-eye toggle-password" data-target="#login-password"></i>
+          <input type="password" id="password" class="form-control" placeholder="Créez un mot de passe">
+          <i class="bi bi-eye toggle-password" data-target="#password"></i>
         </div>
       </div>
 
-      <p class="text-end mb-4">
-        <a href="#" class="auth-link-small">Mot de passe oublié ?</a>
-      </p>
+      <div class="mb-4">
+        <label class="auth-label">Confirmer le mot de passe</label>
+        <div class="auth-input-group">
+          <i class="bi bi-lock"></i>
+          <input type="password" id="password-confirm" class="form-control" placeholder="Confirmez votre mot de passe">
+          <i class="bi bi-eye toggle-password" data-target="#password-confirm"></i>
+        </div>
+      </div>
 
-      <button type="submit" class="btn-auth-submit">
-        <i class="bi bi-person-fill"></i>
-        Se connecter
+      <button type="submit" class="btn btn-auth-submit w-100">
+        <i class="bi bi-person-plus-fill"></i> S'inscrire
       </button>
 
       <p class="auth-footer-text text-center">
-         Vous n'avez pas de compte ?
-        <a href="{{ url_for('register') }}">S'inscrire</a>
+        Vous avez déjà un compte ? <a href="{{ url_for('login') }}">Se connecter</a>
       </p>
     </form>
 
   </div>
 </main>
 
-<script>src="{{ url_for('static', filename='js/login.js') }}"</script>  
+<script src="{{ url_for('static', filename='js/register.js') }}"></script>
 </body>
 </html>

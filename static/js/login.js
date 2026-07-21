@@ -1,71 +1,74 @@
 // ==========================================================
-// Convertly - script.js
-// Interactions partagées entre toutes les pages du projet
+// Convertly - login.js
+// Logique spécifique à la page de connexion
 // ==========================================================
 
 document.addEventListener('DOMContentLoaded', () => {
 
-  /* ---------- 1. Sidebar : surbrillance du lien actif ---------- */
-  const sidebarLinks = document.querySelectorAll('.sidebar-nav li a');
-  if (sidebarLinks.length) {
-    const currentPage = window.location.pathname.split('/').pop() || 'dashboard.html';
+  const loginForm = document.querySelector('.login-form');
+  if (!loginForm) return;
 
-    sidebarLinks.forEach((link) => {
-      const linkPage = link.getAttribute('href');
-      const parentLi = link.closest('li');
-      if (linkPage === currentPage) {
-        parentLi.classList.add('active');
-      } else {
-        parentLi.classList.remove('active');
-      }
-    });
-  }
+  const emailInput = loginForm.querySelector('input[type="email"]');
+  const passwordInput = loginForm.querySelector('input[type="password"]');
+  const errorBox = loginForm.querySelector('.form-error');
+  const submitBtn = loginForm.querySelector('button[type="submit"]');
 
-  /* ---------- 2. Afficher / masquer le mot de passe ---------- */
-  const toggles = document.querySelectorAll('.toggle-password');
-  toggles.forEach((toggle) => {
-    toggle.addEventListener('click', () => {
-      const targetInput = document.querySelector(toggle.dataset.target);
-      if (!targetInput) return;
+  /* ---------- Validation d'un email simple ---------- */
+  const isValidEmail = (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
 
-      const isPassword = targetInput.getAttribute('type') === 'password';
-      targetInput.setAttribute('type', isPassword ? 'text' : 'password');
-      toggle.classList.toggle('bi-eye', !isPassword);
-      toggle.classList.toggle('bi-eye-slash', isPassword);
-    });
+  /* ---------- Afficher un message d'erreur ---------- */
+  const showError = (message) => {
+    if (!errorBox) return;
+    errorBox.textContent = message;
+    errorBox.classList.add('visible');
+  };
+
+  /* ---------- Masquer le message d'erreur ---------- */
+  const clearError = () => {
+    if (!errorBox) return;
+    errorBox.textContent = '';
+    errorBox.classList.remove('visible');
+  };
+
+  /* ---------- Effacer l'erreur dès que l'utilisateur retape ---------- */
+  [emailInput, passwordInput].forEach((input) => {
+    if (input) input.addEventListener('input', clearError);
   });
 
-  /* ---------- 3. Historique : filtres par statut ---------- */
-  const filterButtons = document.querySelectorAll('.filter-pill');
-  const tableRows = document.querySelectorAll('.history-table tbody tr');
+  /* ---------- Soumission du formulaire ---------- */
+  loginForm.addEventListener('submit', (event) => {
+    event.preventDefault();
+    clearError();
 
-  if (filterButtons.length && tableRows.length) {
-    filterButtons.forEach((btn) => {
-      btn.addEventListener('click', () => {
-        filterButtons.forEach((b) => b.classList.remove('active'));
-        btn.classList.add('active');
+    const email = emailInput ? emailInput.value.trim() : '';
+    const password = passwordInput ? passwordInput.value.trim() : '';
 
-        const filter = btn.dataset.filter;
+    if (!email || !password) {
+      showError('Veuillez remplir tous les champs.');
+      return;
+    }
 
-        tableRows.forEach((row) => {
-          if (filter === 'all' || row.dataset.status === filter) {
-            row.style.display = '';
-          } else {
-            row.style.display = 'none';
-          }
-        });
-      });
-    });
-  }
+    if (!isValidEmail(email)) {
+      showError('Adresse e-mail invalide.');
+      return;
+    }
 
-  /* ---------- 4. Formulaire de profil : édition ---------- */
-  const editBtn = document.querySelector('.btn-edit-profile');
-  if (editBtn) {
-    editBtn.addEventListener('click', () => {
-      const fields = document.querySelectorAll('.profile-editable');
-      fields.forEach((field) => field.toggleAttribute('disabled'));
-      editBtn.classList.toggle('btn-editing');
-    });
-  }
+    if (password.length < 6) {
+      showError('Le mot de passe doit contenir au moins 6 caractères.');
+      return;
+    }
+
+    /* ---------- Simulation d'une requête de connexion ---------- */
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Connexion...';
+    }
+
+    setTimeout(() => {
+      // À remplacer par un véritable appel API (fetch/axios) vers le backend
+      console.log('Connexion tentée avec :', { email });
+      window.location.href = 'dashboard.html';
+    }, 800);
+  });
 
 });
