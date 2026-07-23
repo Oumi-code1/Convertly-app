@@ -36,39 +36,38 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   /* ---------- Soumission du formulaire ---------- */
-  loginForm.addEventListener('submit', (event) => {
-    event.preventDefault();
+ loginForm.addEventListener('submit', (event) => {
+
     clearError();
 
-    const email = emailInput ? emailInput.value.trim() : '';
-    const password = passwordInput ? passwordInput.value.trim() : '';
+    const email = emailInput.value.trim();
+    const password = passwordInput.value.trim();
 
     if (!email || !password) {
-      showError('Veuillez remplir tous les champs.');
-      return;
+        showError("Veuillez remplir tous les champs.");
+        event.preventDefault();
+        return;
     }
 
     if (!isValidEmail(email)) {
-      showError('Adresse e-mail invalide.');
-      return;
+        showError("Adresse e-mail invalide.");
+        event.preventDefault();
+        return;
     }
 
     if (password.length < 6) {
-      showError('Le mot de passe doit contenir au moins 6 caractères.');
-      return;
+        showError("Le mot de passe doit contenir au moins 6 caractères.");
+        event.preventDefault();
+        return;
     }
 
-    /* ---------- Simulation d'une requête de connexion ---------- */
     if (submitBtn) {
-      submitBtn.disabled = true;
-      submitBtn.textContent = 'Connexion...';
+        submitBtn.disabled = true;
+        submitBtn.textContent = "Connexion...";
     }
 
-    setTimeout(() => {
-      // À remplacer par un véritable appel API (fetch/axios) vers le backend
-      console.log('Connexion tentée avec :', { email });
-      window.location.href = 'dashboard.html';
-    }, 800);
-  });
+    // Ma tdir ta event.preventDefault() hna
+    // Khalli Flask yst9bel POST
+});
 
 });

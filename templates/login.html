@@ -1,76 +1,105 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
-<title>Convertly - Se connecter</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Convertly - Se connecter</title>
 
-<!-- Bootstrap 5 CSS -->
-<link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet">
-<!-- Bootstrap Icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css">
-<!-- Google Font -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
 
-<link rel="stylesheet" href="login.css">
+    <!-- Bootstrap -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css">
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
+
 <body class="auth-body">
 
 <main class="auth-wrapper">
-  <div class="auth-card">
+    <div class="auth-card">
 
-    <div class="text-center mb-3">
-      <svg width="56" height="56" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" class="auth-logo-icon">
-        <path d="M4 8C4 5.79086 5.79086 4 8 4H16V12C16 14.2091 14.2091 16 12 16H4V8Z" fill="#2859C5"/>
-        <path d="M14 14C14 11.7909 15.7909 10 18 10H26V18C26 20.2091 24.2091 22 22 22H14V14Z" fill="#8FBFFA"/>
-        <path d="M25 6L29 6L29 10" stroke="#2859C5" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
-        <path d="M6 24L6 28L10 28" stroke="#2859C5" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
+        <!-- Logo -->
+        <div class="text-center mb-3">
+            <a href="{{ url_for('accueil') }}" aria-label="Retour à l'accueil" class="brand-link">
+                <img src="{{ url_for('static', filename='images/logoapp.png') }}"
+                     alt="Convertly logo"
+                     class="auth-logo-icon">
+            </a>
+        </div>
+
+        <h2 class="auth-title text-center">Se connecter</h2>
+
+        <p class="auth-subtitle text-center">
+            Bienvenue de retour ! Connectez-vous à votre compte pour continuer.
+        </p>
+
+        <!-- FORM -->
+        <form class="login-form" method="POST" action="{{ url_for('login') }}">
+
+            <div class="mb-3">
+                <label class="auth-label">Adresse e-mail</label>
+
+                <div class="auth-input-group">
+                    <i class="bi bi-envelope"></i>
+
+                    <input
+                        type="email"
+                        name="email"
+                        class="form-control"
+                        placeholder="Entrez votre adresse e-mail"
+                        required>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="auth-label">Mot de passe</label>
+
+                <div class="auth-input-group">
+                    <i class="bi bi-lock"></i>
+
+                    <input
+                        type="password"
+                        id="login-password"
+                        name="password"
+                        class="form-control"
+                        placeholder="Entrez votre mot de passe"
+                        required>
+
+                </div>
+            </div>
+
+            <!-- Message d'erreur JS -->
+            <div class="form-error"></div>
+
+            <p class="text-end mb-4">
+                <a href="#" class="auth-link-small">
+                    Mot de passe oublié ?
+                </a>
+            </p>
+
+            <button type="submit" class="btn-auth-submit">
+                <i class="bi bi-person-fill"></i>
+                Se connecter
+            </button>
+
+            <p class="auth-footer-text text-center mt-4">
+                Vous n'avez pas de compte ?
+                <a href="{{ url_for('register') }}">S'inscrire</a>
+            </p>
+
+        </form>
+
     </div>
-
-    <h2 class="auth-title text-center">Se connecter</h2>
-    <p class="auth-subtitle text-center">
-      Bienvenue de retour ! Connectez-vous à votre compte pour continuer .
-    </p>
-
-    <form>
-      <div class="mb-3">
-        <label class="auth-label">Adresse e-mail</label>
-        <div class="auth-input-group">
-          <i class="bi bi-envelope"></i>
-          <input type="email" class="form-control" placeholder="Entrez votre adresse e-mail">
-        </div>
-      </div>
-
-      <div class="mb-2">
-        <label class="auth-label">Mot de passe</label>
-        <div class="auth-input-group">
-          <i class="bi bi-lock"></i>
-          <input type="password" id="login-password" class="form-control" placeholder="Entrez votre mot de passe">
-          <i class="bi bi-eye toggle-password" data-target="#login-password"></i>
-        </div>
-      </div>
-
-      <p class="text-end mb-4">
-        <a href="#" class="auth-link-small">Mot de passe oublié ?</a>
-      </p>
-
-      <button type="submit" class="btn-auth-submit">
-        <i class="bi bi-person-fill"></i>
-        Se connecter
-      </button>
-
-      <p class="auth-footer-text text-center">
-         Vous n'avez pas de compte ?
-        <a href="{{ url_for('register') }}">S'inscrire</a>
-      </p>
-    </form>
-
-  </div>
 </main>
 
-<script>src="{{ url_for('static', filename='js/login.js') }}"</script>  
+<!-- JS -->
+<script src="{{ url_for('static', filename='js/login.js') }}"></script>
+
 </body>
 </html>
+
