@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Convertly - Tableau de bord</title>
+
+<!-- Bootstrap 5 CSS -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet">
+<!-- Bootstrap Icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css">
+<!-- Google Font -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard_user.css') }}">
+</head>
+<body>
+
+<!-- ============ HEADER ============ -->
+<header class="site-header">
+  <div class="container-fluid header-inner">
+
+    <!-- Logo -->
+    <a href="{{ url_for('dashboard_user') }}" class="logo" aria-label="Retour au tableau de bord">
+      <img src="{{ url_for('static', filename='images/logoapp.png') }}"
+           alt="Convertly logo"
+           class="logo-icon">
+      <span class="logo-text">Convertly</span>
+    </a>
+
+    <!-- Search -->
+    <div class="header-search">
+      <i class="bi bi-search search-icon"></i>
+      <input type="text" class="form-control" placeholder="Rechercher des fichiers converti">
+    </div>
+
+    <!-- Profile -->
+    <a href="{{ url_for('profile') }}" class="header-profile">
+      <i class="bi bi-person-bounding-box profile-icon"></i>
+      <span>Profil Utilisateur</span>
+    </a>
+
+  </div>
+</header>
+
+<!-- ============ MAIN SECTION ============ -->
+<main class="page-body">
+  <div class="container-fluid">
+    <div class="row mb-4">
+      <div class="col-12">
+        <nav class="top-navbar">
+          <ul class="top-nav list-unstyled d-flex flex-wrap align-items-center gap-2 mb-0">
+            <li class="top-nav-item active">
+              <a href="{{ url_for('dashboard_user') }}"><i class="bi bi-house-door-fill"></i><span>Tableau de bord</span></a>
+            </li>
+            <li class="top-nav-item">
+              <a href="{{ url_for('history') }}"><i class="bi bi-arrow-repeat"></i><span>Dernières conversions</span></a>
+            </li>
+            <li class="top-nav-item">
+              <a href="#"><i class="bi bi-folder-fill text-warning"></i><span>Documents</span></a>
+            </li>
+            <li class="top-nav-item">
+              <a href="#"><i class="bi bi-image text-info"></i><span>Images</span></a>
+            </li>
+            <li class="top-nav-item">
+              <a href="#"><i class="bi bi-download text-primary"></i><span>Téléchargements</span></a>
+            </li>
+            <li class="top-nav-item">
+              <a href="#"><i class="bi bi-trash-fill text-success"></i><span>Corbeille</span></a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+    <div class="row">
+      <!-- ============ CONTENT ============ -->
+      <section class="col-12">
+        <div class="content-card">
+
+          <!-- Title + action -->
+          <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
+            <div>
+              <h2 class="page-title mb-1">Tableau de bord</h2>
+              <p class="page-subtitle">Gérez vos conversions et vos fichiers en toute simplicité.</p>
+            </div>
+            <button class="btn btn-import">
+              <i class="bi bi-download"></i> Importer un fichier
+            </button>
+          </div>
+
+          <!-- Stat cards -->
+          <div class="row g-4 mb-4">
+            <div class="col-md-4">
+              <div class="stat-card">
+                <div class="stat-header">
+                  <h6 class="stat-label">Fichiers convertis</h6>
+                  <i class="bi bi-file-earmark-fill stat-icon icon-blue"></i>
+                </div>
+                <div class="stat-body">
+                  <span class="stat-value"><span class="stat-number" data-value="{{ stats.files_converted }}">{{ stats.files_converted }}</span></span>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="stat-card">
+                <div class="stat-header">
+                  <h6 class="stat-label">Téléchargement</h6>
+                  <span class="icon-circle icon-circle-green">
+                    <i class="bi bi-arrow-down"></i>
+                  </span>
+                </div>
+                <div class="stat-body">
+                  <span class="stat-value"><span class="stat-number" data-value="{{ stats.total_downloads }}">{{ stats.total_downloads }}</span></span>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="stat-card">
+                <div class="stat-header">
+                  <h6 class="stat-label">Conversions</h6>
+                  <span class="icon-circle icon-circle-yellow">
+                    <i class="bi bi-clock-fill"></i>
+                  </span>
+                </div>
+                <div class="stat-body">
+                  <span class="stat-value"><span class="stat-number" data-value="{{ stats.conversions_today }}">{{ stats.conversions_today }}</span></span>
+                  <span class="stat-sub">Aujourd'hui</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Upload + donut -->
+          <div class="row g-4 mb-4">
+            <div class="col-lg-8">
+              <form class="upload-form" action="{{ url_for('dashboard_user') }}" method="post" enctype="multipart/form-data">
+                <input type="file" class="upload-input" name="file" accept=".pdf,.doc,.docx,.png,.jpg,.jpeg,.xlsx,.txt" hidden>
+                <div class="dropzone-card upload-dropzone" role="button" tabindex="0">
+                  <div class="upload-icon-wrap">
+                    <i class="bi bi-cloud-arrow-up"></i>
+                  </div>
+                  <h3>Glissez-déposez vos fichiers ici</h3>
+                  <p>ou cliquez sur « Parcourir les fichiers »</p>
+                  <button type="button" class="btn btn-browse">Parcourir les fichiers</button>
+                  <p class="upload-filename"></p>
+                  <div class="upload-progress">
+                    <div class="upload-progress-bar"></div>
+                  </div>
+                </div>
+                <div class="mb-3">
+                  <label for="format_cible" class="form-label">Format de sortie</label>
+                  <select id="format_cible" name="format_cible" class="form-select" required>
+                    <option value="">-- Choisir un format --</option>
+                    {% for f in formats %}
+                      <option value="{{ f.id }}">{{ f.nom }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+                <div class="upload-cta">
+                  <button type="submit" class="btn btn-convert" disabled>Convertir</button>
+                </div>
+              </form>
+            </div>
+            <div class="col-lg-4">
+              <div class="donut-card">
+                <h6 class="card-heading">Types de conversions</h6>
+                <div class="donut-wrap">
+                  <svg viewBox="0 0 42 42" class="donut">
+                    <circle cx="21" cy="21" r="15.9" fill="transparent" stroke="#eef1f5" stroke-width="6"></circle>
+                    {% for type in conversion_types %}
+                      <circle cx="21" cy="21" r="15.9" fill="transparent" stroke="{{ type.color }}" stroke-width="6"
+                        stroke-dasharray="{{ type.dasharray }}" stroke-dashoffset="{{ type.dashoffset }}"></circle>
+                    {% endfor %}
+                  </svg>
+                </div>
+                <ul class="legend list-unstyled mb-0">
+                  {% if conversion_types %}
+                    {% for type in conversion_types %}
+                      <li>
+                        <span class="dot" style="background-color: {{ type.color }}"></span> {{ type.label }} <b>{{ type.percentage }}%</b>
+                      </li>
+                    {% endfor %}
+                  {% else %}
+                    <li>Aucune conversion disponible.</li>
+                  {% endif %}
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <!-- Recent conversions -->
+          <div class="recent-card">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <h6 class="card-heading mb-0">Dernières conversions</h6>
+              <a href="{{ url_for('history') }}" class="see-all">Voir tout</a>
+            </div>
+
+            <ul class="file-list list-unstyled mb-0 recent-conversions-list">
+              {% if recent_conversions %}
+                {% for conversion in recent_conversions %}
+                  <li>
+                    <i class="{{ conversion.file_icon_class }}"></i>
+                    <span class="file-name">{{ conversion.file_name }}</span>
+                    <span class="file-date">{{ conversion.date_conversion }}</span>
+                    <span class="file-status">{{ conversion.target_format }}</span>
+                    {% if conversion.has_output %}
+                      <a href="{{ conversion.download_url }}" class="action-icon" aria-label="Télécharger {{ conversion.file_name }}">
+                        <i class="bi bi-download"></i>
+                      </a>
+                    {% else %}
+                      <span class="action-icon text-muted" title="Fichier indisponible"><i class="bi bi-download"></i></span>
+                    {% endif %}
+                    <i class="bi bi-three-dots-vertical action-icon"></i>
+                  </li>
+                {% endfor %}
+              {% else %}
+                <li>Aucune conversion récente disponible.</li>
+              {% endif %}
+            </ul>
+          </div>
+
+        </div>
+      </section>
+
+    </div>
+  </div>
+</main>
+
+<script src="{{ url_for('static', filename='js/dashboard_user.js') }}"></script>
+</body>
+</html>

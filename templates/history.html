@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Convertly - Historique des conversions</title>
+
+<!-- Bootstrap 5 CSS -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet">
+<!-- Bootstrap Icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css">
+<!-- Google Font -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/history.css') }}">
+</head>
+<body>
+
+<!-- ============ HEADER (commun à toutes les pages internes) ============ -->
+<header class="site-header">
+  <div class="container-fluid header-inner">
+
+    <a href="{{ url_for('dashboard_user') }}">
+      <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" class="logo-icon">
+        <path d="M4 8C4 5.79086 5.79086 4 8 4H16V12C16 14.2091 14.2091 16 12 16H4V8Z" fill="#2859C5"/>
+        <path d="M14 14C14 11.7909 15.7909 10 18 10H26V18C26 20.2091 24.2091 22 22 22H14V14Z" fill="#8FBFFA"/>
+        <path d="M25 6L29 6L29 10" stroke="#2859C5" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M6 24L6 28L10 28" stroke="#2859C5" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span class="logo-text">Convertly</span>
+    </a>
+
+    <div class="header-search">
+      <i class="bi bi-search search-icon"></i>
+      <input type="text" class="form-control" placeholder="Rechercher des fichiers converti">
+    </div>
+
+    <a href="{{ url_for('profile') }}">
+      <i class="bi bi-person-bounding-box profile-icon"></i>
+      <span>Profil Utilisateur</span>
+    </a>
+
+  </div>
+</header>
+
+<!-- ============ MAIN SECTION ============ -->
+<main class="page-body page-body-flat">
+  <div class="container-fluid">
+
+    <!-- Titre de page -->
+    <div class="page-heading-row">
+      <span class="page-heading-icon">
+        <i class="bi bi-arrow-repeat"></i>
+      </span>
+      <h2 class="page-title mb-0">Historique des conversions</h2>
+    </div>
+
+    <!-- Filtres -->
+    <div class="filter-row">
+      <button class="filter-pill active" data-filter="all">
+        <i class="bi bi-grid-fill"></i> Tous
+      </button>
+      <button class="filter-pill" data-filter="success">
+        <i class="bi bi-check-circle-fill text-success"></i> Réussi
+      </button>
+      <button class="filter-pill" data-filter="pending">
+        <i class="bi bi-clock-fill text-warning"></i> En attente
+      </button>
+      <button class="filter-pill" data-filter="failed">
+        <i class="bi bi-x-circle-fill text-danger"></i> Échec
+      </button>
+    </div>
+
+    <!-- Tableau -->
+    <div class="table-card">
+      <div class="table-responsive">
+        <table class="table history-table align-middle mb-0">
+          <thead>
+            <tr>
+              <th>Nom du fichiers</th>
+              <th>Conversion</th>
+              <th>Taille</th>
+              <th>Date</th>
+              <th>Statut</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for conversion in history_conversions %}
+            <tr data-status="{{ conversion.status_filter }}">
+              <td class="file-cell">
+                <i class="{{ conversion.file_icon_class }}"></i>
+                <span>{{ conversion.file_name }}</span>
+              </td>
+              <td>{{ conversion.source_format }} &rarr; {{ conversion.target_format }}</td>
+              <td>{{ conversion.file_size }}</td>
+              <td>{{ conversion.date_conversion }}</td>
+              <td><span class="status-pill {{ conversion.status_class }}"><i class="bi {% if conversion.status_filter == 'success' %}bi-check-circle-fill{% elif conversion.status_filter == 'pending' %}bi-clock-fill{% else %}bi-x-circle-fill{% endif %}"></i> {{ conversion.status_label }}</span></td>
+              <td>
+                {% if conversion.can_download %}
+                <button type="button" class="icon-btn icon-btn-blue" onclick="window.location.href='{{ conversion.download_url }}'"><i class="bi bi-download"></i></button>
+                {% else %}
+                <button type="button" class="icon-btn icon-btn-blue" disabled><i class="bi bi-download"></i></button>
+                {% endif %}
+                <form method="post" action="{{ conversion.delete_url }}" style="display:inline-block; margin:0;">
+                  <button type="submit" class="icon-btn icon-btn-red"><i class="bi bi-trash-fill"></i></button>
+                </form>
+              </td>
+            </tr>
+            {% else %}
+            <tr>
+              <td colspan="6" class="text-center">Aucune conversion disponible.</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<script src="{{ url_for('static', filename='js/history.js') }}"></script>
+</body>
+</html>
