@@ -2,11 +2,25 @@ from flask import Flask, render_template, request, redirect, url_for, session, s
 from connexion import get_db_connection
 from werkzeug.security import generate_password_hash, check_password_hash
 import os
+import uuid
 from werkzeug.utils import secure_filename
 from conversions import perform_conversion
+from datetime import datetime, timedelta
 
 app = Flask(__name__)
 app.secret_key = "Convertly_secret_key"
+
+PROFILE_UPLOAD_FOLDER = os.path.join("static", "uploads")
+app.config["PROFILE_UPLOAD_FOLDER"] = PROFILE_UPLOAD_FOLDER
+os.makedirs(PROFILE_UPLOAD_FOLDER, exist_ok=True)
+
+
+def _ensure_profile_photo_column(conn, cursor):
+    """Ajoute la colonne photo à la table utilisateur si elle n'existe pas encore."""
+    cursor.execute("SHOW COLUMNS FROM utilisateur LIKE 'photo'")
+    if cursor.fetchone() is None:
+        cursor.execute("ALTER TABLE utilisateur ADD COLUMN photo VARCHAR(255) NULL")
+        conn.commit()
 
 
 def _get_downloads_column_exists(cursor):
@@ -74,11 +88,13 @@ def _get_file_icon_class(format_name):
     if normalized in {"pdf"}:
         return "bi bi-filetype-pdf file-icon file-icon-pdf"
     if normalized in {"png", "jpg", "jpeg", "gif", "bmp", "svg"}:
-        return "bi bi-filetype-png file-icon file-icon-png"
-    if normalized in {"doc", "docx", "txt", "odt", "rtf", "ppt", "pptx"}:
-        return "bi bi-file-earmark-text-fill file-icon file-icon-doc"
+        return "bi bi-filetype-image file-icon file-icon-image"
+    if normalized in {"doc", "docx", "txt", "odt", "rtf"}:
+        return "bi bi-filetype-doc file-icon file-icon-doc"
+    if normalized in {"ppt", "pptx"}:
+        return "bi bi-filetype-ppt file-icon file-icon-ppt"
     if normalized in {"xls", "xlsx", "csv"}:
-        return "bi bi-file-earmark-spreadsheet-fill file-icon"
+        return "bi bi-filetype-xls file-icon file-icon-xls"
 
     return "bi bi-file-earmark-fill file-icon"
 
@@ -191,7 +207,7 @@ def _get_recent_conversions(cursor, user_id):
         SELECT
             c.id AS id_conversion,
             f.nom_origin AS file_name,
-            DATE_FORMAT(c.date_conversion, '%%d/%%m/%%Y %%H:%%i') AS date_conversion,
+            DATE_FORMAT(c.date_conversion, '%d/%m/%Y %H:%i') AS date_conversion,
             c.statut,
             fc.nom AS target_format,
             c.chemin_fichier_converti
@@ -209,13 +225,21 @@ def _get_recent_conversions(cursor, user_id):
     conversions = []
 
     for row in rows:
+        # Si la base contient NULL pour le statut, on infère un statut simple
+        # à partir de la présence du chemin de fichier converti :
+        # - chemin présent -> terminé
+        # - chemin absent  -> en cours (pending)
+        statut_value = row["statut"]
+        if not statut_value:
+            statut_value = "terminee" if row.get("chemin_fichier_converti") else "encours"
+
         conversions.append({
             "id_conversion": row["id_conversion"],
             "file_name": row["file_name"],
             "date_conversion": row["date_conversion"],
             "target_format": row["target_format"] or "Inconnu",
-            "status_filter": _format_history_status_filter(row["statut"]),
-            "status_label": _format_history_status_label(row["statut"]),
+            "status_filter": _format_history_status_filter(statut_value),
+            "status_label": _format_history_status_label(statut_value),
             "file_icon_class": _get_file_icon_class(row["target_format"] or row["file_name"]),
             "download_url": url_for("download_conversion", id_conversion=row["id_conversion"]),
             "has_output": bool(row["chemin_fichier_converti"]),
@@ -320,7 +344,194 @@ def login():
 
 @app.route("/dashboard_admin")
 def dashboard_admin():
-    return render_template("dashboard_admin.html")
+
+    if "id_utilisateur" not in session:
+        return redirect(url_for("login"))
+
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+
+    # Nombre des utilisateurs
+    cursor.execute("""
+        SELECT COUNT(*) AS total_users
+        FROM utilisateur
+    """)
+    total_users = cursor.fetchone()["total_users"]
+
+    #Nombre total des conversions
+    cursor.execute("""
+        SELECT COUNT(*) AS total_conversions
+        FROM conversion
+        WHERE est_supprime = 0
+    """)
+    total_conversions = cursor.fetchone()["total_conversions"]
+
+    # Nombre des formats actifs
+    cursor.execute("""
+        SELECT COUNT(*) AS total_formats
+        FROM format
+        WHERE est_actif = 1
+    """)
+    total_formats = cursor.fetchone()["total_formats"]
+
+    # Nombre des conversions échouées
+    cursor.execute("""
+        SELECT COUNT(*) AS total_failed
+        FROM conversion
+        WHERE statut='echec'
+          AND est_supprime = 0
+    """)
+    total_failed = cursor.fetchone()["total_failed"]
+
+    #tableau de dernières conversions
+    cursor.execute("""
+SELECT
+u.nom AS utilisateur,
+f.nom_origin AS fichier,
+fo.nom AS format_source,
+fc.nom AS format_cible,
+c.date_conversion,
+c.statut
+
+FROM conversion c
+
+JOIN fichier f
+ON c.id_fichier=f.id
+
+JOIN utilisateur u
+ON f.id_utilisateur=u.id
+
+LEFT JOIN format fo
+ON f.id_format_origin=fo.id
+
+LEFT JOIN format fc
+ON c.id_format_cible=fc.id
+
+ORDER BY c.date_conversion DESC
+
+LIMIT 10
+""")
+
+
+    recent_conversions = cursor.fetchall()
+
+    sql_chart = """
+    SELECT
+        DATE(c.date_conversion) AS jour,
+        COUNT(*) AS total
+    FROM conversion c
+    WHERE c.date_conversion >= DATE_SUB(CURDATE(), INTERVAL 6 DAY)
+    AND c.est_supprime = 0
+    GROUP BY DATE(c.date_conversion)
+    ORDER BY jour
+    """
+
+    cursor.execute(sql_chart)
+    rows = cursor.fetchall()
+    chart_dict = {}
+
+    for row in rows:
+        chart_dict[row["jour"]] = row["total"]
+        labels = []
+    values = []
+
+    today = datetime.today()
+
+    for i in range(6, -1, -1):
+
+        day = (today - timedelta(days=i)).date()
+
+        labels.append(day.strftime("%d/%m"))
+
+        values.append(chart_dict.get(day, 0))
+
+    def _get_formats_chart(cursor):
+        sql = """
+        SELECT
+            fc.nom AS format,
+            COUNT(*) AS total
+        FROM conversion c
+        JOIN format fc ON c.id_format_cible = fc.id
+        WHERE c.est_supprime = 0
+        GROUP BY fc.nom
+        ORDER BY total DESC
+        """
+
+        cursor.execute(sql)
+        rows = cursor.fetchall()
+
+        labels = []
+        values = []
+        table_data = []
+
+        total = sum(row["total"] for row in rows)
+
+        colors = [
+                    "#2563EB",
+                    "#38BDF8",
+                    "#22C55E",
+                    "#F97316",
+                    "#A78BFA",
+                    "#CBD5E1"
+        ]
+
+        for row in rows:
+            percentage = round((row["total"] * 100) / total) if total else 0
+
+            labels.append(row["format"])
+            values.append(row["total"])
+
+            table_data.append({
+                "format" : row["format"],
+                "total" : row["total"],
+                "percentage" : percentage
+            })
+
+        for i, item in enumerate(table_data):
+            item["color"] = colors[i % len(colors)]
+
+        return labels, values, table_data
+
+    format_labels, format_values, format_table_data = _get_formats_chart(cursor)
+
+    def _get_recent_users(cursor):
+        sql = """
+        SELECT
+            nom,
+            email,
+            date_creation,
+            est_actif
+        FROM utilisateur
+        WHERE type_utilisateur = 'utilisateur'
+        ORDER BY date_creation DESC
+        LIMIT 5
+        """
+
+        cursor.execute(sql)
+        rows = cursor.fetchall()
+
+        return rows
+
+    recent_users = _get_recent_users(cursor)
+
+    cursor.close()
+    conn.close()
+
+
+    return render_template(
+        "dashboard_admin.html",
+        total_users=total_users,
+        total_conversions=total_conversions,
+        total_formats=total_formats,
+        total_failed=total_failed,
+        recent_conversions=recent_conversions,
+        chart_labels=labels,
+        chart_values=values,
+        format_labels=format_labels,
+        format_values=format_values,
+        format_table_data=format_table_data,
+        recent_users=recent_users
+    )
 
 UPLOAD_FOLDER = "uploads"
 CONVERTED_FOLDER = "converted"
@@ -461,6 +672,32 @@ def download_conversion(id_conversion):
     conn.close()
     return send_file(file_path, as_attachment=True, download_name=os.path.basename(file_path))
 
+@app.route("/documents_user")
+def documents_user():
+
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+
+    cursor.execute("""
+    SELECT
+        f.nom_origin,
+        f.taille,
+        f.date_creation,
+        fo.nom AS format
+    FROM fichier f
+    JOIN format fo
+    ON f.id_format_origin = fo.id
+    WHERE f.id_utilisateur = %s;
+    """,(session["id_utilisateur"],))
+
+    fichiers = cursor.fetchall()
+    print("Fichiers récupérés :", fichiers)
+
+    cursor.close()
+    conn.close()
+
+    return render_template("documents_user.html", fichiers=fichiers)
+
 
 @app.route("/history")
 def history():
@@ -470,6 +707,35 @@ def history():
     user_id = session["id_utilisateur"]
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
+    # Normaliser les statuts NULL en base pour cet utilisateur afin
+    # d'éviter l'affichage systématique "Inconnu".
+    try:
+        # Si une conversion a un fichier de sortie mais pas de statut, on considère "terminee".
+        sql_update_done = """
+            UPDATE conversion c
+            JOIN fichier f ON c.id_fichier = f.id
+            SET c.statut = %s
+            WHERE f.id_utilisateur = %s
+              AND c.statut IS NULL
+              AND c.chemin_fichier_converti IS NOT NULL
+        """
+        cursor.execute(sql_update_done, ("terminee", user_id))
+        conn.commit()
+
+        # Si une conversion n'a pas de fichier de sortie et pas de statut, on marque "encours" (pending).
+        sql_update_pending = """
+            UPDATE conversion c
+            JOIN fichier f ON c.id_fichier = f.id
+            SET c.statut = %s
+            WHERE f.id_utilisateur = %s
+              AND c.statut IS NULL
+              AND c.chemin_fichier_converti IS NULL
+        """
+        cursor.execute(sql_update_pending, ("encours", user_id))
+        conn.commit()
+    except Exception:
+        # Ne pas interrompre l'affichage en cas d'erreur de migration légère.
+        conn.rollback()
 
     sql = """
         SELECT
@@ -500,8 +766,12 @@ def history():
             file_size = f"{round(size_kb / 1024, 1)} MB"
         else:
             file_size = f"{round(size_kb, 1)} KB"
+        # Détecter et inférer un statut si nécessaire (valeur NULL en base)
+        statut_value = row["statut"]
+        if not statut_value:
+            statut_value = "terminee" if row.get("chemin_fichier_converti") else "encours"
 
-        status_filter = _format_history_status_filter(row["statut"])
+        status_filter = _format_history_status_filter(statut_value)
         print("Statut reçu :", repr(row["statut"]))
         history_conversions.append({
             "id_conversion": row["id_conversion"],
@@ -510,14 +780,15 @@ def history():
             "target_format": row["target_format"] or "Inconnu",
             "file_size": file_size,
             "date_conversion": row["date_conversion"],
-            "status_label": _format_history_status_label(row["statut"]),
+            "status_label": _format_history_status_label(statut_value),
             "status_class": f"status-{status_filter}",
             "status_filter": status_filter,
             "file_icon_class": _get_file_icon_class(row["target_format"] or row["source_format"]),
             "download_url": url_for("download_conversion", id_conversion=row["id_conversion"]),
             "can_download": bool(row["chemin_fichier_converti"]),
-            "delete_url": url_for("delete_conversion", id_conversion=row["id_conversion"]),
         })
+
+        
 
     cursor.close()
     conn.close()
@@ -568,8 +839,161 @@ def delete_conversion(id_conversion):
 
 @app.route("/profile")
 def profile():
-    return render_template("profile.html")
 
+    if "id_utilisateur" not in session:
+        return redirect(url_for("login"))
+
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+
+    _ensure_profile_photo_column(conn, cursor)
+
+    cursor.execute("""
+        SELECT id, nom, email, date_creation, photo
+        FROM utilisateur
+        WHERE id = %s
+    """, (session["id_utilisateur"],))
+
+    user = cursor.fetchone()
+
+    cursor.execute("""
+    SELECT COUNT(*) AS total
+    FROM conversion c
+    JOIN fichier f ON c.id_fichier = f.id
+    WHERE f.id_utilisateur = %s;
+    """,(session["id_utilisateur"],))
+
+    total = cursor.fetchone()["total"]
+
+    cursor.execute("""
+    SELECT SUM(taille) AS stockage
+    FROM fichier
+    WHERE id_utilisateur=%s
+    """, (session["id_utilisateur"],))
+    stockage = cursor.fetchone()["stockage"] or 0
+
+    cursor.close()
+    conn.close()
+
+    storage_used_mb = round(stockage / 1024, 2) if stockage else 0
+    profile_image_url = None
+    if user and user.get("photo"):
+        profile_image_url = url_for("static", filename=f"uploads/{user['photo']}")
+
+    return render_template(
+        "profile.html",
+        user=user,
+        total=total,
+        stockage=storage_used_mb,
+        profile_image_url=profile_image_url,
+        profile_message=request.args.get("message"),
+    )
+
+
+# ===== MODIFICATION DU PROFIL =====
+@app.route("/modifier_profil", methods=["GET", "POST"])
+def modifier_profil():
+    if "id_utilisateur" not in session:
+        return redirect(url_for("login"))
+
+    if request.method != "POST":
+        return redirect(url_for("profile"))
+
+    user_id = session["id_utilisateur"]
+    nom = request.form.get("nom", "").strip()
+    email = request.form.get("email", "").strip()
+    uploaded_file = request.files.get("photo_profil")
+
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    _ensure_profile_photo_column(conn, cursor)
+
+    if not nom or not email:
+        cursor.close()
+        conn.close()
+        return redirect(url_for("profile", message="Veuillez renseigner votre nom et votre email."))
+
+    cursor.execute("SELECT id, photo FROM utilisateur WHERE email = %s AND id != %s", (email, user_id))
+    if cursor.fetchone():
+        cursor.close()
+        conn.close()
+        return redirect(url_for("profile", message="Cet email est déjà utilisé."))
+
+    photo_filename = None
+    if uploaded_file and uploaded_file.filename:
+        allowed_extensions = {".jpg", ".jpeg", ".png"}
+        extension = os.path.splitext(uploaded_file.filename)[1].lower()
+        if extension not in allowed_extensions:
+            cursor.close()
+            conn.close()
+            return redirect(url_for("profile", message="Seules les images JPG, JPEG et PNG sont acceptées."))
+
+        filename = secure_filename(uploaded_file.filename)
+        unique_name = f"{uuid.uuid4().hex}{extension}"
+        file_path = os.path.join(app.config["PROFILE_UPLOAD_FOLDER"], unique_name)
+        uploaded_file.save(file_path)
+        photo_filename = unique_name
+
+        cursor.execute("SELECT photo FROM utilisateur WHERE id = %s", (user_id,))
+        current_user = cursor.fetchone()
+        if current_user and current_user.get("photo"):
+            old_photo_path = os.path.join(app.config["PROFILE_UPLOAD_FOLDER"], current_user["photo"])
+            if os.path.isfile(old_photo_path):
+                os.remove(old_photo_path)
+
+    sql = "UPDATE utilisateur SET nom = %s, email = %s"
+    params = [nom, email]
+    if photo_filename is not None:
+        sql += ", photo = %s"
+        params.append(photo_filename)
+    sql += " WHERE id = %s"
+    params.append(user_id)
+    cursor.execute(sql, tuple(params))
+    conn.commit()
+
+    session["nom_utilisateur"] = nom
+
+    cursor.close()
+    conn.close()
+    return redirect(url_for("profile", message="Profil mis à jour avec succès."))
+
+
+# ===== CHANGEMENT DE MOT DE PASSE =====
+@app.route("/changer_mot_de_passe", methods=["GET", "POST"])
+def changer_mot_de_passe():
+    if "id_utilisateur" not in session:
+        return redirect(url_for("login"))
+
+    if request.method != "POST":
+        return redirect(url_for("profile"))
+
+    current_password = request.form.get("current_password", "")
+    new_password = request.form.get("new_password", "")
+    confirm_password = request.form.get("confirm_password", "")
+
+    if not current_password or not new_password or not confirm_password:
+        return redirect(url_for("profile", message="Veuillez remplir tous les champs du mot de passe."))
+
+    if new_password != confirm_password:
+        return redirect(url_for("profile", message="La confirmation du mot de passe ne correspond pas."))
+
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute("SELECT mot_de_passe FROM utilisateur WHERE id = %s", (session["id_utilisateur"],))
+    user = cursor.fetchone()
+
+    if not user or not check_password_hash(user["mot_de_passe"], current_password):
+        cursor.close()
+        conn.close()
+        return redirect(url_for("profile", message="Le mot de passe actuel est incorrect."))
+
+    hashed_password = generate_password_hash(new_password)
+    cursor.execute("UPDATE utilisateur SET mot_de_passe = %s WHERE id = %s", (hashed_password, session["id_utilisateur"]))
+    conn.commit()
+
+    cursor.close()
+    conn.close()
+    return redirect(url_for("profile", message="Mot de passe modifié avec succès."))
 
 
 # ===== LANCER LE SERVEUR =====

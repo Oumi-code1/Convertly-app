@@ -30,12 +30,6 @@
       <span class="logo-text">Convertly</span>
     </a>
 
-    <!-- Search -->
-    <div class="header-search">
-      <i class="bi bi-search search-icon"></i>
-      <input type="text" class="form-control" placeholder="Rechercher des fichiers converti">
-    </div>
-
     <!-- Profile -->
     <a href="{{ url_for('profile') }}" class="header-profile">
       <i class="bi bi-person-bounding-box profile-icon"></i>
@@ -59,7 +53,7 @@
               <a href="{{ url_for('history') }}"><i class="bi bi-arrow-repeat"></i><span>Dernières conversions</span></a>
             </li>
             <li class="top-nav-item">
-              <a href="#"><i class="bi bi-folder-fill text-warning"></i><span>Documents</span></a>
+              <a href="{{ url_for('documents_user') }}"><i class="bi bi-folder-fill text-warning"></i><span>Documents</span></a>
             </li>
             <li class="top-nav-item">
               <a href="#"><i class="bi bi-image text-info"></i><span>Images</span></a>
@@ -85,9 +79,6 @@
               <h2 class="page-title mb-1">Tableau de bord</h2>
               <p class="page-subtitle">Gérez vos conversions et vos fichiers en toute simplicité.</p>
             </div>
-            <button class="btn btn-import">
-              <i class="bi bi-download"></i> Importer un fichier
-            </button>
           </div>
 
           <!-- Stat cards -->
