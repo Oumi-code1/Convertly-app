@@ -85,4 +85,20 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  const logoutBtn = document.getElementById("logoutBtn");
+
+if (logoutBtn) {
+
+    logoutBtn.addEventListener("click", function () {
+
+        const modal = new bootstrap.Modal(
+            document.getElementById("logoutModal")
+        );
+
+        modal.show();
+
+    });
+
+}
+
 });

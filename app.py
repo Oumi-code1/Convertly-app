@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session, send_file, abort
+from flask import Flask, flash, render_template, request, redirect, url_for, session, send_file, abort
 from connexion import get_db_connection
 from werkzeug.security import generate_password_hash, check_password_hash
 import os
@@ -88,7 +88,7 @@ def _get_file_icon_class(format_name):
     if normalized in {"pdf"}:
         return "bi bi-filetype-pdf file-icon file-icon-pdf"
     if normalized in {"png", "jpg", "jpeg", "gif", "bmp", "svg"}:
-        return "bi bi-filetype-image file-icon file-icon-image"
+        return "bi bi-file-earmark-image-fill"
     if normalized in {"doc", "docx", "txt", "odt", "rtf"}:
         return "bi bi-filetype-doc file-icon file-icon-doc"
     if normalized in {"ppt", "pptx"}:
@@ -97,6 +97,31 @@ def _get_file_icon_class(format_name):
         return "bi bi-filetype-xls file-icon file-icon-xls"
 
     return "bi bi-file-earmark-fill file-icon"
+
+def _get_file_icon_color(format_name):
+    """Retourne les couleurs de l'icône selon le type."""
+
+    if not format_name:
+        return "text-slate-600 bg-slate-100"
+
+    normalized = format_name.strip().lower()
+
+    if normalized == "pdf":
+        return "text-red-600 bg-red-100"
+
+    if normalized in {"doc", "docx", "txt", "odt", "rtf"}:
+        return "text-blue-600 bg-blue-100"
+
+    if normalized in {"xls", "xlsx", "csv"}:
+        return "text-green-600 bg-green-100"
+
+    if normalized in {"ppt", "pptx"}:
+        return "text-orange-600 bg-orange-100"
+
+    if normalized in {"png", "jpg", "jpeg", "gif", "bmp", "svg"}:
+        return "text-purple-600 bg-purple-100"
+
+    return "text-slate-600 bg-slate-100"
 
 
 def _get_dashboard_counts(cursor, user_id):
@@ -247,6 +272,32 @@ def _get_recent_conversions(cursor, user_id):
 
     return conversions
 
+def format_size(size):
+    if not size:
+        return "0 KB"
+
+    size = float(size)
+
+    units = ["KB", "MB", "GB", "TB"]
+
+    i = 0
+
+    while size >= 1024 and i < len(units)-1:
+        size /= 1024
+        i += 1
+
+    return f"{size:.2f} {units[i]}"
+
+def format_date(date):
+
+    if not date:
+        return "", ""
+
+    return (
+        date.strftime("%d/%m/%Y"),
+        date.strftime("%H:%M")
+    )
+
 # ===== PAGE ACCUEIL =====
 @app.route("/")
 def accueil():
@@ -341,6 +392,15 @@ def login():
             return "Email ou mot de passe incorrect."
 
     return render_template("login.html")
+
+@app.route("/logout")
+def logout():
+
+    session.clear()
+
+    flash("Vous avez été déconnecté avec succès.", "success")
+
+    return redirect(url_for("login"))
 
 @app.route("/dashboard_admin")
 def dashboard_admin():
@@ -691,12 +751,65 @@ def documents_user():
     """,(session["id_utilisateur"],))
 
     fichiers = cursor.fetchall()
-    print("Fichiers récupérés :", fichiers)
+    #Stockage utilisé par l'utilisateur
+   
+
+    TOTAL_STORAGE = 5 * 1024 * 1024 * 1024      # 5 Go
+
+    cursor.execute("""
+    SELECT COALESCE(SUM(taille),0) AS total
+    FROM fichier
+    WHERE id_utilisateur=%s
+    """, (session["id_utilisateur"],))
+
+    result = cursor.fetchone()
+
+    used_storage = result["total"]
+
+    remaining_storage = TOTAL_STORAGE - used_storage
+
+    percent = round((used_storage / TOTAL_STORAGE) * 100, 1)
+
+    # Couleur du cercle
+    if percent < 70:
+        storage_color = "#2563eb"      # Bleu
+
+    elif percent < 90:
+        storage_color = "#f59e0b"      # Orange
+
+    else:
+        storage_color = "#ef4444"      # Rouge
+
+    for fichier in fichiers:
+        fichier["icon"] = _get_file_icon_class(fichier["format"])
+        fichier["icon_color"] = _get_file_icon_color(fichier["format"])
+
+        # Taille
+        fichier["taille"] = format_size(fichier["taille"])
+
+         # Date
+        fichier["jour"] = fichier["date_creation"].strftime("%d/%m/%Y")
+        fichier["heure"] = fichier["date_creation"].strftime("%H:%M")
 
     cursor.close()
     conn.close()
 
-    return render_template("documents_user.html", fichiers=fichiers)
+    return render_template(
+        "documents_user.html",
+
+        fichiers=fichiers,
+
+        percent=percent,
+
+        used_storage=format_size(used_storage),
+
+        total_storage=format_size(TOTAL_STORAGE),
+
+        remaining_storage=format_size(remaining_storage),
+
+        storage_color=storage_color
+    )
+   
 
 
 @app.route("/history")
@@ -783,12 +896,17 @@ def history():
             "status_label": _format_history_status_label(statut_value),
             "status_class": f"status-{status_filter}",
             "status_filter": status_filter,
-            "file_icon_class": _get_file_icon_class(row["target_format"] or row["source_format"]),
+            "file_icon_class": _get_file_icon_class(
+                row["target_format"] or row["source_format"]
+            ),
+
+            "file_icon_color": _get_file_icon_color(
+                row["target_format"] or row["source_format"]
+            ),
+
             "download_url": url_for("download_conversion", id_conversion=row["id_conversion"]),
             "can_download": bool(row["chemin_fichier_converti"]),
         })
-
-        
 
     cursor.close()
     conn.close()

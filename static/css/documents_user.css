@@ -1,0 +1,73 @@
+/* =========================================================
+   Convertly — Documents
+   CSS personnalisé (en plus des classes utilitaires Tailwind)
+   ========================================================= */
+
+/* Police globale */
+body {
+  font-family:'Inter',ui-sans-serif,system-ui;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  color: var(--text-dark);
+  flex-shrink: 0;
+}
+
+.logo-icon {
+  width: 70px;
+  height: 70px;
+  object-fit: contain;
+  border-radius: 16px;
+}
+
+.logo-text {
+  font-size: 1.85rem;
+  font-weight: 800;
+  color: #0f172a;
+  letter-spacing: -0.5px;
+}
+
+
+/* Anneau de progression circulaire (stockage utilisé — 62%) */
+.progress-ring {
+  background: conic-gradient(#2563eb 0% 62%, #e2e8f0 62% 100%);
+}
+
+.progress-ring::before {
+  content: "";
+  position: absolute;
+  inset: 8px;
+  background: #fff;
+  border-radius: 9999px;
+}
+
+/* Animation de disparition des lignes du tableau (suppression) */
+.row-fade {
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.row-fade.leaving {
+  opacity: 0;
+  transform: translateX(12px);
+}
+
+/* Notifications toast (apparition / disparition en fondu) */
+.toast {
+  transition: all 0.3s ease;
+}
+
+/* Barre de défilement personnalisée */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 9999px;
+}
+

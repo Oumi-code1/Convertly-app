@@ -82,8 +82,10 @@
             {% for conversion in history_conversions %}
             <tr class="history-row" data-status="{{ conversion.status_filter }}">
               <td class="file-cell">
-                <i class="{{ conversion.file_icon_class }}"></i>
-                <span class="file-name">{{ conversion.file_name }}</span>
+                <div class="w-9 h-9 rounded-lg {{ conversion.file_icon_color }} flex items-center justify-center">
+                    <i class="{{ conversion.file_icon_class }}"></i>
+                </div>
+                <span class="file-name">{{ conversion.nom_origin }}</span>
               </td>
               <td class="conversion-cell">{{ conversion.source_format }} &rarr; {{ conversion.target_format }}</td>
               <td class="size-cell">{{ conversion.file_size }}</td>
