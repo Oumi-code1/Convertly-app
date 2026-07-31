@@ -1,0 +1,18 @@
+# Virtual environment 
+venv/
+
+#Python cache 
+__pycache__/
+*.pyc
+
+#User uploads files
+uploads/
+
+#User converted files 
+converted/
+
+#environment variables
+.env
+
+
+
