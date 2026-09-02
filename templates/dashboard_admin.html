@@ -36,51 +36,40 @@
     </div>
 
     <nav class="cvt-nav">
-      <a href="#" class="cvt-nav-link active" data-nav="dashboard">
+      <a href="{{ url_for('dashboard_admin') }}" class="cvt-nav-link active" data-nav="dashboard">
         <i class="fa-solid fa-house cvt-nav-icon"></i>
         <span>Dashboard</span>
       </a>
 
       <p class="cvt-nav-label">Gestion</p>
 
-      <a href="#" class="cvt-nav-link" data-nav="utilisateurs">
+      <a href="{{ url_for('users_admin') }}" class="cvt-nav-link" data-nav="utilisateurs">
         <i class="fa-solid fa-users cvt-nav-icon"></i>
         <span>Utilisateurs</span>
       </a>
-      <a href="#" class="cvt-nav-link" data-nav="formats">
+      <a href="{{ url_for('formats_admin') }}" class="cvt-nav-link" data-nav="formats">
         <i class="fa-solid fa-file-arrow-down cvt-nav-icon"></i>
         <span>Formats conversion</span>
       </a>
-      <a href="#" class="cvt-nav-link" data-nav="historique">
+      <a href="{{ url_for('history_admin') }}" class="cvt-nav-link" data-nav="historique">
         <i class="fa-solid fa-clock-rotate-left cvt-nav-icon"></i>
         <span>Historique global</span>
       </a>
 
       <p class="cvt-nav-label">Analyse</p>
 
-      <a href="#" class="cvt-nav-link" data-nav="statistiques">
+      <a href="{{ url_for('statistics_admin') }}" class="cvt-nav-link" data-nav="statistiques">
         <i class="fa-solid fa-chart-simple cvt-nav-icon"></i>
         <span>Statistiques</span>
       </a>
 
       <p class="cvt-nav-label">Paramètres</p>
 
-      <a href="#" class="cvt-nav-link" data-nav="parametres">
-        <i class="fa-solid fa-gear cvt-nav-icon"></i>
-        <span>Paramètres</span>
+      <a href="{{ url_for('profile_admin') }}" class="cvt-nav-link" data-nav="profil">
+        <i class="fa-solid fa-user-gear cvt-nav-icon"></i>
+        <span>Mon profil</span>
       </a>
     </nav>
-
-    <div class="cvt-sidebar-footer">
-      <div class="cvt-user-mini">
-        <img src="https://api.dicebear.com/7.x/initials/svg?seed=Admin&backgroundColor=2563eb&fontFamily=Poppins" alt="Admin" class="cvt-avatar-sm">
-        <div class="cvt-user-mini-info">
-          <span class="cvt-user-mini-name">Admin</span>
-          <span class="cvt-user-mini-mail">admin@convertly.com</span>
-        </div>
-        <i class="fa-solid fa-chevron-down cvt-user-mini-caret"></i>
-      </div>
-    </div>
   </aside>
 
   <div class="cvt-sidebar-overlay" id="cvtOverlay"></div>
@@ -97,22 +86,7 @@
       </div>
 
       <div class="cvt-header-right">
-        <div class="cvt-daterange" id="cvtDateRange">
-          <i class="fa-regular fa-calendar"></i>
-          <span>22/07/2025 - 28/07/2025</span>
-          <i class="fa-solid fa-chevron-down cvt-daterange-caret"></i>
-        </div>
-
-        <button class="cvt-icon-btn cvt-notif-btn" aria-label="Notifications">
-          <i class="fa-regular fa-bell"></i>
-          <span class="cvt-badge">5</span>
-        </button>
-
-        <div class="cvt-user-menu">
-          <img src="https://api.dicebear.com/7.x/initials/svg?seed=Admin&backgroundColor=2563eb&fontFamily=Poppins" alt="Admin" class="cvt-avatar">
-          <span class="cvt-user-name">Admin</span>
-          <i class="fa-solid fa-chevron-down"></i>
-        </div>
+        {% include 'includes/admin_header.html' %}
       </div>
     </header>
 
@@ -132,41 +106,33 @@
         <div class="cvt-stat-card">
           <div class="cvt-stat-top">
             <div class="cvt-stat-icon cvt-icon-blue"><i class="fa-solid fa-users"></i></div>
-            <canvas class="cvt-spark" data-spark="up" data-values="4,6,5,7,6,8,9" width="90" height="34"></canvas>
           </div>
           <p class="cvt-stat-label">Utilisateurs</p>
           <h2 class="cvt-stat-value">{{ total_users }}</h2>
-          <p class="cvt-stat-delta cvt-delta-up"><i class="fa-solid fa-arrow-up"></i> 12.5% <span>depuis la semaine dernière</span></p>
         </div>
 
         <div class="cvt-stat-card">
           <div class="cvt-stat-top">
             <div class="cvt-stat-icon cvt-icon-blue"><i class="fa-solid fa-arrows-rotate"></i></div>
-            <canvas class="cvt-spark" data-spark="up" data-values="5,4,6,7,6,8,9" width="90" height="34"></canvas>
           </div>
           <p class="cvt-stat-label">Conversions</p>
           <h2 class="cvt-stat-value">{{ total_conversions }}</h2>
-          <p class="cvt-stat-delta cvt-delta-up"><i class="fa-solid fa-arrow-up"></i> 18.3% <span>depuis la semaine dernière</span></p>
         </div>
 
         <div class="cvt-stat-card">
           <div class="cvt-stat-top">
             <div class="cvt-stat-icon cvt-icon-violet"><i class="fa-solid fa-file-lines"></i></div>
-            <canvas class="cvt-spark" data-spark="up" data-values="3,4,4,5,6,6,7" width="90" height="34"></canvas>
           </div>
           <p class="cvt-stat-label">Formats</p>
           <h2 class="cvt-stat-value">{{ total_formats }}</h2>
-          <p class="cvt-stat-delta cvt-delta-up"><i class="fa-solid fa-plus"></i> 2 <span>nouveaux</span></p>
         </div>
 
         <div class="cvt-stat-card">
           <div class="cvt-stat-top">
             <div class="cvt-stat-icon cvt-icon-red"><i class="fa-solid fa-triangle-exclamation"></i></div>
-            <canvas class="cvt-spark" data-spark="down" data-values="9,7,8,6,7,5,4" width="90" height="34"></canvas>
           </div>
           <p class="cvt-stat-label">Échecs</p>
           <h2 class="cvt-stat-value">{{ total_failed }}</h2>
-          <p class="cvt-stat-delta cvt-delta-down"><i class="fa-solid fa-arrow-down"></i> 8.7% <span>depuis la semaine dernière</span></p>
         </div>
 
       </section>
@@ -182,8 +148,6 @@
               <i class="fa-solid fa-chevron-down"></i>
               <select id="cvtRangeSelect" aria-label="Choisir la période">
                 <option>7 derniers jours</option>
-                <option>14 derniers jours</option>
-                <option>30 derniers jours</option>
               </select>
             </div>
           </div>
@@ -195,7 +159,7 @@
         <div class="cvt-card cvt-col-side">
           <div class="cvt-card-header">
             <h3>Dernières conversions</h3>
-            <a href="#" class="cvt-link">Voir tout</a>
+            <a href="{{ url_for('history_admin') }}" class="cvt-link">Voir tout</a>
           </div>
           <div class="cvt-table-wrap">
             <table class="cvt-table">
@@ -226,9 +190,9 @@
                     {% elif c.statut == 'echec' %}
                       <span class="cvt-badge-status cvt-status-failed">Échec</span>
                     {% else %}
-                      <span class="cvt-badge-status cvt-status-pending">En attente</span>
+                      <span class="cvt-badge-status cvt-status-pending">En cours</span>
                     {% endif %}
-                    </td>
+                  </td>
                 </tr>
                 {% endfor %}
               </tbody>
@@ -280,7 +244,7 @@
         <div class="cvt-card cvt-col-side">
           <div class="cvt-card-header">
             <h3>Inscriptions récentes</h3>
-            <a href="#" class="cvt-link">Voir tout</a>
+            <a href="{{ url_for('users_admin') }}" class="cvt-link">Voir tout</a>
           </div>
           <div class="cvt-table-wrap">
             <table class="cvt-table">
@@ -303,12 +267,12 @@
                   <td>{{ user.date_creation.strftime('%d/%m/%Y %H:%M') }}</td>
 
                   <td>
-                    {% if user.est_actif %}
-                        <span class="status-pill status-success">
+                    {% if user.statut == 'actif' %}
+                        <span class="cvt-badge-status cvt-status-success">
                             Actif
                         </span>
                     {% else %}
-                        <span class="status-pill status-failed">
+                        <span class="cvt-badge-status cvt-status-failed">
                             Inactif
                         </span>
                     {% endif %}
@@ -327,7 +291,7 @@
         <h3 class="cvt-actions-title">Actions rapides</h3>
         <div class="cvt-actions-grid">
 
-          <a href="#" class="cvt-action-card">
+          <a href="{{ url_for('users_admin') }}" class="cvt-action-card">
             <div class="cvt-action-icon cvt-icon-blue"><i class="fa-solid fa-users"></i></div>
             <div class="cvt-action-text">
               <strong>Gérer les utilisateurs</strong>
@@ -336,7 +300,7 @@
             <i class="fa-solid fa-arrow-right cvt-action-arrow"></i>
           </a>
 
-          <a href="#" class="cvt-action-card">
+          <a href="{{ url_for('formats_admin') }}" class="cvt-action-card">
             <div class="cvt-action-icon cvt-icon-violet"><i class="fa-solid fa-file-arrow-down"></i></div>
             <div class="cvt-action-text">
               <strong>Gérer les formats conversion</strong>
@@ -345,7 +309,7 @@
             <i class="fa-solid fa-arrow-right cvt-action-arrow"></i>
           </a>
 
-          <a href="#" class="cvt-action-card">
+          <a href="{{ url_for('history_admin') }}" class="cvt-action-card">
             <div class="cvt-action-icon cvt-icon-green"><i class="fa-solid fa-clock-rotate-left"></i></div>
             <div class="cvt-action-text">
               <strong>Consulter l'historique global</strong>
@@ -354,7 +318,7 @@
             <i class="fa-solid fa-arrow-right cvt-action-arrow"></i>
           </a>
 
-          <a href="#" class="cvt-action-card">
+          <a href="{{ url_for('statistics_admin') }}" class="cvt-action-card">
             <div class="cvt-action-icon cvt-icon-orange"><i class="fa-solid fa-chart-column"></i></div>
             <div class="cvt-action-text">
               <strong>Voir les statistiques</strong>

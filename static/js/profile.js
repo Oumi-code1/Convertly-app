@@ -10,13 +10,27 @@ document.addEventListener('DOMContentLoaded', () => {
   const avatarInput = document.querySelector('.avatar-input');
   const avatarIcon = document.querySelector('.avatar-icon');
 
-  if (avatarEditBtn && avatarInput) {
-    avatarEditBtn.addEventListener('click', () => avatarInput.click());
+  if (avatarEditBtn) {
 
+    avatarEditBtn.addEventListener("click", () => {
+
+        // Ouvrir le modal
+        const modal = new bootstrap.Modal(
+            document.getElementById("editProfileModal")
+        );
+
+        modal.show();
+
+        // Ouvrir automatiquement le sélecteur de fichiers
+        setTimeout(() => {
+            document.getElementById("profile-photo").click();
+        }, 300);
+
+    });
     avatarInput.addEventListener('change', () => {
       const file = avatarInput.files[0];
       if (!file) return;
-
+ 
       const reader = new FileReader();
       reader.onload = (event) => {
         if (avatarIcon) {
@@ -25,6 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
       };
       reader.readAsDataURL(file);
     });
+
   }
 
   /* ---------- 2. Barre de progression du profil ---------- */

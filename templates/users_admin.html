@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Convertly — Gérer les utilisateurs</title>
+
+<!-- Google Fonts : Poppins -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<!-- Bootstrap 5 -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+<!-- Base shell (sidebar / header / stat-cards / table) -->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard_admin.css') }}">
+<!-- Users page styles -->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/users_admin.css') }}">
+</head>
+<body>
+
+<div class="cvt-app">
+
+  <!-- ============ SIDEBAR ============ -->
+  <aside class="cvt-sidebar" id="cvtSidebar">
+    <div class="cvt-sidebar-header">
+      <div class="cvt-logo">
+        <img src="{{ url_for('static', filename='images/logoapp.png') }}"  class="cvt-logo-img">
+        <span class="cvt-logo-text">Convertly</span>
+      </div>
+      <button class="cvt-sidebar-toggle d-lg-none" id="cvtSidebarClose" aria-label="Fermer le menu">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+
+    <nav class="cvt-nav">
+      <a href="{{ url_for('dashboard_admin') }}" class="cvt-nav-link" data-nav="dashboard">
+        <i class="fa-solid fa-house cvt-nav-icon"></i>
+        <span>Dashboard</span>
+      </a>
+
+      <p class="cvt-nav-label">Gestion</p>
+
+      <a href="{{ url_for('users_admin') }}" class="cvt-nav-link active" data-nav="utilisateurs">
+        <i class="fa-solid fa-users cvt-nav-icon"></i>
+        <span>Utilisateurs</span>
+      </a>
+      <a href="{{ url_for('formats_admin') }}" class="cvt-nav-link" data-nav="formats">
+        <i class="fa-solid fa-file-arrow-down cvt-nav-icon"></i>
+        <span>Formats conversion</span>
+      </a>
+      <a href="{{ url_for('history_admin') }}" class="cvt-nav-link" data-nav="historique">
+        <i class="fa-solid fa-clock-rotate-left cvt-nav-icon"></i>
+        <span>Historique global</span>
+      </a>
+
+      <p class="cvt-nav-label">Analyse</p>
+
+      <a href="{{ url_for('statistics_admin') }}" class="cvt-nav-link" data-nav="statistiques">
+        <i class="fa-solid fa-chart-simple cvt-nav-icon"></i>
+        <span>Statistiques</span>
+      </a>
+
+      <p class="cvt-nav-label">Paramètres</p>
+
+      <a href="{{ url_for('profile_admin') }}" class="cvt-nav-link" data-nav="profil">
+        <i class="fa-solid fa-user-gear cvt-nav-icon"></i>
+        <span>Mon profil</span>
+      </a>
+    </nav>
+  </aside>
+
+  <div class="cvt-sidebar-overlay" id="cvtOverlay"></div>
+
+  <!-- ============ MAIN ============ -->
+  <div class="cvt-main">
+
+    <!-- ===== HEADER ===== -->
+    <header class="cvt-header">
+      <div class="cvt-header-left">
+        <button class="cvt-burger d-lg-none" id="cvtBurger" aria-label="Ouvrir le menu">
+          <i class="fa-solid fa-bars"></i>
+        </button>
+      </div>
+      {% include 'includes/admin_header.html' %}
+    </header>
+
+    <!-- ===== CONTENT ===== -->
+    <main class="cvt-content">
+
+      <div class="cvt-page-title cvt-page-title-row">
+        <div>
+          <h1>Gérer les utilisateurs</h1>
+          <p>Ajoutez, modifiez ou supprimez les comptes de la plateforme</p>
+        </div>
+        <button class="cvt-btn cvt-btn-primary" id="cvtAddUserBtn" type="button">
+          <i class="fa-solid fa-plus"></i> Ajouter un utilisateur
+        </button>
+      </div>
+
+      <!-- ===== STAT CARDS ===== -->
+      <section class="cvt-stats-grid">
+        <div class="cvt-stat-card">
+          <div class="cvt-stat-top">
+            <div class="cvt-stat-icon cvt-icon-blue"><i class="fa-solid fa-users"></i></div>
+          </div>
+          <p class="cvt-stat-label">Total utilisateurs</p>
+          <h2 class="cvt-stat-value">{{ total_utilisateurs }}</h2>
+        </div>
+
+        <div class="cvt-stat-card">
+          <div class="cvt-stat-top">
+            <div class="cvt-stat-icon cvt-icon-green"><i class="fa-solid fa-user-check"></i></div>
+          </div>
+          <p class="cvt-stat-label">Utilisateurs actifs</p>
+          <h2 class="cvt-stat-value">{{ utilisateurs_actifs }}</h2>
+        </div>
+
+        <div class="cvt-stat-card">
+          <div class="cvt-stat-top">
+            <div class="cvt-stat-icon cvt-icon-red"><i class="fa-solid fa-user-slash"></i></div>
+          </div>
+          <p class="cvt-stat-label">Utilisateurs Inactifs</p>
+          <h2 class="cvt-stat-value">{{ utilisateurs_inactifs }}</h2>
+        </div>
+
+        <div class="cvt-stat-card">
+          <div class="cvt-stat-top">
+            <div class="cvt-stat-icon cvt-icon-orange"><i class="fa-solid fa-user-plus"></i></div>
+          </div>
+          <p class="cvt-stat-label">Nouveaux ce mois</p>
+          <h2 class="cvt-stat-value">{{ nouveaux_ce_mois }}</h2>
+        </div>
+      </section>
+
+      <!-- ===== CARTE TABLE UTILISATEURS ===== -->
+      <section class="cvt-card cvt-users-card">
+
+        <div class="cvt-users-toolbar">
+          <div class="cvt-toolbar-filters">
+            <div class="cvt-select cvt-filter-select">
+              <span id="cvtStatusFilterLabel">Tous les statuts</span>
+              <i class="fa-solid fa-chevron-down"></i>
+              <select id="cvtStatusFilter" aria-label="Filtrer par statut">
+                <option value="">Tous les statuts</option>
+                <option value="Actif">Actif</option>
+                <option value="Inactif">Inactif</option>
+              </select>
+            </div>
+
+            <button class="cvt-btn cvt-btn-ghost" id="cvtExportBtn" type="button">
+              <i class="fa-solid fa-arrow-up-from-bracket"></i> Exporter
+            </button>
+          </div>
+        </div>
+        
+        <div class="cvt-table-wrap">
+          <table class="cvt-table cvt-users-table" id="cvtUsersTable">
+            <thead>
+              <tr>
+                <th>Utilisateur</th>
+                <th>Statut</th>
+                <th>Date d'inscription</th>
+                <th class="cvt-th-actions">Actions</th>
+              </tr>
+            </thead>
+           <tbody id="cvtUsersBody">
+                {% for user in utilisateurs %}
+                <tr data-status="{{ user.statut }}">
+                    <td>
+                        <div class="cvt-user-cell">
+                            <img
+                                src="https://api.dicebear.com/7.x/initials/svg?seed={{ user.nom }}&backgroundColor=2563eb"
+                                alt=""
+                            >
+                            <div class="cvt-user-cell-info">
+                                <span class="cvt-user-cell-name">
+                                    {{ user.nom }}
+                                </span>
+                                <span class="cvt-user-cell-mail">
+                                    {{ user.email }}
+                                </span>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        {% if user.statut == 'actif' %}
+                            <span class="cvt-badge-status cvt-status-success">
+                                Actif
+                            </span>
+                        {% else %}
+                            <span class="cvt-badge-status cvt-status-neutral">
+                                Inactif
+                            </span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {{ user.date_creation.strftime('%d/%m/%Y') }}
+                    </td>
+                    <td>
+                        <div class="cvt-row-actions">
+                            <button
+                                class="cvt-icon-action"
+                                title="Modifier"
+                                data-action="edit"
+                                data-id="{{ user.id }}"
+                                data-name="{{ user.nom }}"
+                                data-email="{{ user.email }}"
+                                data-status="{{ user.statut }}"
+                            >
+                                <i class="fa-regular fa-pen-to-square"></i>
+                            </button>
+                            <button
+                                class="cvt-icon-action cvt-icon-action-danger"
+                                title="Supprimer"
+                                data-action="delete"
+                                data-id="{{ user.id }}"
+                                data-name="{{ user.nom }}"
+                            >
+                                <i class="fa-regular fa-trash-can"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+          </table>
+
+          <div class="cvt-empty-state" id="cvtEmptyState">
+            <i class="fa-solid fa-user-slash"></i>
+            <p>Aucun utilisateur ne correspond à votre recherche</p>
+          </div>
+        </div>
+        <div class="cvt-users-pagination">
+        <div class="cvt-pagination">
+
+              <div class="cvt-pagination-info">
+                  Affichage de
+                  <strong>{{ debut }}-{{ fin }}</strong>
+                  sur
+                  <strong>{{ total_utilisateurs }}</strong>
+                  utilisateurs
+              </div>
+
+              <div class="cvt-pagination-controls">
+
+                  {% if page > 1 %}
+                      <a
+                          href="{{ url_for('users_admin', page=page-1, statut=statut_selectionne) }}"
+                          class="cvt-page-btn"
+                      >
+                          <i class="fa-solid fa-chevron-left"></i>
+                      </a>
+                  {% else %}
+                      <button
+                          type="button"
+                          class="cvt-page-btn"
+                          disabled
+                      >
+                          <i class="fa-solid fa-chevron-left"></i>
+                      </button>
+                  {% endif %}
+
+
+                  <span class="cvt-page-btn active">
+                      {{ page }}
+                  </span>
+
+
+                  {% if page < total_pages %}
+                      <a
+                          href="{{ url_for('users_admin', page=page+1, statut=statut_selectionne) }}"
+                          class="cvt-page-btn"
+                      >
+                          <i class="fa-solid fa-chevron-right"></i>
+                      </a>
+                  {% else %}
+                      <button
+                          type="button"
+                          class="cvt-page-btn"
+                          disabled
+                      >
+                          <i class="fa-solid fa-chevron-right"></i>
+                      </button>
+                  {% endif %}
+
+              </div>
+          </div>
+        </div>        
+      </div>
+  </div>
+</div>
+
+<!-- ============ MODAL : AJOUTER / MODIFIER UN UTILISATEUR ============ -->
+<div class="cvt-modal-overlay" id="cvtUserModalOverlay">
+
+  <div class="cvt-modal">
+
+    <div class="cvt-modal-header">
+      <h3 id="cvtUserModalTitle">Ajouter un utilisateur</h3>
+
+      <button
+        type="button"
+        class="cvt-modal-close"
+        id="cvtUserModalClose"
+        aria-label="Fermer"
+      >
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+
+
+    <!-- FORMULAIRE -->
+    <form
+      class="cvt-form"
+      id="cvtUserForm"
+      method="POST"
+      action="{{ url_for('users_admin') }}"
+    >
+
+      <div class="cvt-form-grid">
+
+        <!-- NOM -->
+        <div class="cvt-field cvt-field-full">
+          <label for="cvtUserName">Nom complet</label>
+
+          <input
+            type="text"
+            id="cvtUserName"
+            name="nom"
+            placeholder="Ex : Karim Idrissi"
+            required
+          >
+        </div>
+
+
+        <!-- EMAIL -->
+        <div class="cvt-field cvt-field-full">
+          <label for="cvtUserEmail">Adresse email</label>
+
+          <div class="cvt-input-icon">
+            <i class="fa-regular fa-envelope"></i>
+
+            <input
+              type="email"
+              id="cvtUserEmail"
+              name="email"
+              placeholder="karim.idrissi@email.com"
+              required
+            >
+          </div>
+        </div>
+
+
+        <!-- RÔLE -->
+        <div class="cvt-field">
+          <label for="cvtUserRole">Rôle</label>
+
+          <select id="cvtUserRole" disabled>
+            <option value="utilisateur">Utilisateur</option>
+          </select>
+        </div>
+
+
+        <!-- STATUT -->
+        <div class="cvt-field">
+          <label for="cvtUserStatus">Statut</label>
+
+          <select
+            id="cvtUserStatus"
+            name="statut"
+          >
+            <option value="actif">Actif</option>
+            <option value="inactif">Inactif</option>
+          </select>
+        </div>
+
+
+        <!-- MOT DE PASSE -->
+        <div
+          class="cvt-field cvt-field-full"
+          id="cvtUserPwdField"
+        >
+          <label for="cvtUserPwd">
+            Mot de passe temporaire
+          </label>
+
+          <div class="cvt-input-icon">
+
+            <i class="fa-solid fa-lock"></i>
+
+            <input
+              type="password"
+              id="cvtUserPwd"
+              name="mot_de_passe"
+              placeholder="••••••••"
+              required
+            >
+
+          </div>
+        </div>
+
+      </div>
+
+
+      <!-- ACTIONS -->
+      <div class="cvt-form-actions">
+
+        <button
+          type="button"
+          class="cvt-btn cvt-btn-ghost"
+          id="cvtUserModalCancel"
+        >
+          Annuler
+        </button>
+
+        <button
+          type="submit"
+          class="cvt-btn cvt-btn-primary"
+          id="cvtUserModalSubmit"
+        >
+          <i class="fa-solid fa-check"></i>
+          Ajouter l'utilisateur
+        </button>
+
+      </div>
+
+    </form>
+
+  </div>
+</div>
+
+<!-- ============ MODAL : CONFIRMATION SUPPRESSION ============ -->
+<div class="cvt-modal-overlay" id="cvtDeleteModalOverlay">
+  <div class="cvt-modal cvt-modal-sm">
+    <div class="cvt-modal-icon-danger"><i class="fa-solid fa-triangle-exclamation"></i></div>
+    <h3 class="cvt-modal-confirm-title">Supprimer cet utilisateur ?</h3>
+    <p class="cvt-modal-confirm-text">
+      Vous êtes sur le point de supprimer <strong id="cvtDeleteUserName">cet utilisateur</strong>.
+      Cette action est irréversible.
+    </p>
+    <div class="cvt-form-actions cvt-form-actions-center">
+      <button type="button" class="cvt-btn cvt-btn-ghost" id="cvtDeleteModalCancel">Annuler</button>
+      <button type="button" class="cvt-btn cvt-btn-danger" id="cvtDeleteModalConfirm">
+        <i class="fa-solid fa-trash"></i> Supprimer
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast de confirmation -->
+<div class="cvt-toast" id="cvtToast">
+  <i class="fa-solid fa-circle-check"></i>
+  <span id="cvtToastMsg">Modifications enregistrées</span>
+</div>
+
+<script src="{{ url_for('static', filename='js/users_admin.js') }}"></script>
+</body>
+</html>

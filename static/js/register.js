@@ -43,7 +43,16 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        // Vérifier la confirmation
+        // Vérifier la sécurité du mot de passe
+        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#_.+-])[A-Za-z\d@$!%*?&#_.+-]{8,}$/;
+        
+        if (!passwordRegex.test(password)) {
+            alert("Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule, un chiffre et un caractère spécial.");
+            event.preventDefault();
+            return;
+        }
+        
+        // Vérifier la confirmation du mot de passe
         if (password !== confirmPassword) {
             alert("Les mots de passe ne correspondent pas.");
             event.preventDefault();

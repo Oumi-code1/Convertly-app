@@ -66,8 +66,6 @@ document.addEventListener('DOMContentLoaded', () => {
         submitBtn.textContent = "Connexion...";
     }
 
-    // Ma tdir ta event.preventDefault() hna
-    // Khalli Flask yst9bel POST
 });
 
 });
