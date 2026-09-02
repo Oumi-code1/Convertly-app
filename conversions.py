@@ -5,6 +5,7 @@ from pathlib import Path
 
 from PIL import Image
 
+
 try:
     from pdf2docx import Converter
 except ImportError:  # pragma: no cover
@@ -41,8 +42,11 @@ def _ensure_directory(path: str) -> None:
 
 
 def _get_output_extension(dest_format: str) -> str:
-    if dest_format in {"JPG", "JPEG"}:
+    if dest_format == "JPG":
         return "jpg"
+
+    if dest_format == "JPEG":
+        return "jpeg"
     return dest_format.lower()
 
 
@@ -96,21 +100,38 @@ def convert_jpg_to_png(src_path: str, dest_path: str) -> str:
         image.save(dest_path, format="PNG")
     return dest_path
 
-
-def convert_jpeg_to_png(src_path: str, dest_path: str) -> str:
-    return convert_jpg_to_png(src_path, dest_path)
-
-
 def convert_png_to_jpg(src_path: str, dest_path: str) -> str:
     with Image.open(src_path) as image:
         rgb = image.convert("RGB")
         rgb.save(dest_path, format="JPEG", quality=95)
     return dest_path
 
+def convert_jpeg_to_png(src_path: str, dest_path: str) -> str:
+    with Image.open(src_path) as image:
+        image = image.convert("RGBA")
+        image.save(dest_path, format="PNG")
+    return dest_path
+
 
 def convert_png_to_jpeg(src_path: str, dest_path: str) -> str:
-    return convert_png_to_jpg(src_path, dest_path)
+    with Image.open(src_path) as image:
+        rgb = image.convert("RGB")
+        rgb.save(dest_path, format="JPEG", quality=95)
+    return dest_path
 
+
+def convert_jpg_to_jpeg(src_path: str, dest_path: str) -> str:
+    with Image.open(src_path) as image:
+        rgb = image.convert("RGB")
+        rgb.save(dest_path, format="JPEG", quality=95)
+    return dest_path
+
+
+def convert_jpeg_to_jpg(src_path: str, dest_path: str) -> str:
+    with Image.open(src_path) as image:
+        rgb = image.convert("RGB")
+        rgb.save(dest_path, format="JPEG", quality=95)
+    return dest_path
 
 def convert_pdf_to_docx(src_path: str, dest_path: str) -> str:
     if Converter is None:
@@ -203,9 +224,14 @@ def _wrap_text(text: str, max_chars: int) -> list[str]:
 
 CONVERSION_FUNCTIONS = {
     ("JPG", "PNG"): convert_jpg_to_png,
-    ("JPEG", "PNG"): convert_jpeg_to_png,
     ("PNG", "JPG"): convert_png_to_jpg,
+
+    ("JPEG", "PNG"): convert_jpeg_to_png,
     ("PNG", "JPEG"): convert_png_to_jpeg,
+
+    ("JPG", "JPEG"): convert_jpg_to_jpeg,
+    ("JPEG", "JPG"): convert_jpeg_to_jpg,
+
     ("PDF", "DOCX"): convert_pdf_to_docx,
     ("DOCX", "PDF"): convert_docx_to_pdf,
     ("PPTX", "PDF"): convert_pptx_to_pdf,

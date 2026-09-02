@@ -1,0 +1,28 @@
+<div class="cvt-notif-wrap" id="cvtNotifWrap">
+  <button class="cvt-icon-btn cvt-notif-btn" id="cvtNotifBtn" aria-label="Notifications" type="button">
+    <i class="fa-regular fa-bell"></i>
+    <span class="cvt-badge" id="cvtNotifBadge" {% if current_admin_notif_count == 0 %}style="display:none;"{% endif %}>{{ current_admin_notif_count }}</span>
+  </button>
+
+  <div class="cvt-notif-dropdown" id="cvtNotifDropdown">
+    <div class="cvt-notif-dropdown-header">
+      <strong>Notifications</strong>
+      <span class="cvt-notif-subtitle">Dernières 24 heures</span>
+    </div>
+    <div class="cvt-notif-list" id="cvtNotifList">
+      <div class="cvt-notif-empty">Chargement...</div>
+    </div>
+  </div>
+</div>
+
+<a href="{{ url_for('profile_admin') }}" class="cvt-user-menu">
+  {% if current_admin_photo_url %}
+    <img src="{{ current_admin_photo_url }}" alt="{{ current_admin.nom if current_admin else 'Admin' }}" class="cvt-avatar">
+  {% else %}
+    <img src="https://api.dicebear.com/7.x/initials/svg?seed={{ (current_admin.nom if current_admin else 'Admin')|urlencode }}&backgroundColor=2563eb&fontFamily=Poppins" alt="{{ current_admin.nom if current_admin else 'Admin' }}" class="cvt-avatar">
+  {% endif %}
+  <span class="cvt-user-name">{{ current_admin.nom if current_admin else 'Admin' }}</span>
+  <i class="fa-solid fa-chevron-down"></i>
+</a>
+
+<script src="{{ url_for('static', filename='js/admin_notifications.js') }}"></script>

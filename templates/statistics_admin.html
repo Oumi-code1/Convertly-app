@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Convertly — Statistiques</title>
+
+<!-- Google Fonts : Poppins -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<!-- Bootstrap 5 -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+<!-- Base shell (sidebar / header / stat-cards / table) -->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard_admin.css') }}">
+<!-- Statistics page styles -->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/statistics_admin.css') }}">
+</head>
+<body>
+
+<div class="cvt-app">
+
+  <!-- ============ SIDEBAR ============ -->
+  <aside class="cvt-sidebar" id="cvtSidebar">
+    <div class="cvt-sidebar-header">
+      <div class="cvt-logo">
+        <img src="{{ url_for('static', filename='images/logoapp.png') }}"  class="cvt-logo-img">
+        <span class="cvt-logo-text">Convertly</span>
+      </div>
+      <button class="cvt-sidebar-toggle d-lg-none" id="cvtSidebarClose" aria-label="Fermer le menu">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+
+    <nav class="cvt-nav">
+      <a href="{{ url_for('dashboard_admin') }}" class="cvt-nav-link" data-nav="dashboard">
+        <i class="fa-solid fa-house cvt-nav-icon"></i>
+        <span>Dashboard</span>
+      </a>
+
+      <p class="cvt-nav-label">Gestion</p>
+
+      <a href="{{ url_for('users_admin') }}" class="cvt-nav-link" data-nav="utilisateurs">
+        <i class="fa-solid fa-users cvt-nav-icon"></i>
+        <span>Utilisateurs</span>
+      </a>
+      <a href="{{ url_for('formats_admin') }}" class="cvt-nav-link" data-nav="formats">
+        <i class="fa-solid fa-file-arrow-down cvt-nav-icon"></i>
+        <span>Formats conversion</span>
+      </a>
+      <a href="{{ url_for('history_admin') }}" class="cvt-nav-link" data-nav="historique">
+        <i class="fa-solid fa-clock-rotate-left cvt-nav-icon"></i>
+        <span>Historique global</span>
+      </a>
+
+      <p class="cvt-nav-label">Analyse</p>
+
+      <a href="{{ url_for('statistics_admin') }}" class="cvt-nav-link active" data-nav="statistiques">
+        <i class="fa-solid fa-chart-simple cvt-nav-icon"></i>
+        <span>Statistiques</span>
+      </a>
+
+      <p class="cvt-nav-label">Paramètres</p>
+
+      <a href="{{ url_for('profile_admin') }}" class="cvt-nav-link" data-nav="profil">
+        <i class="fa-solid fa-user-gear cvt-nav-icon"></i>
+        <span>Mon profil</span>
+      </a>
+    </nav>
+  </aside>
+
+  <div class="cvt-sidebar-overlay" id="cvtOverlay"></div>
+
+  <!-- ============ MAIN ============ -->
+  <div class="cvt-main">
+
+    <!-- ===== HEADER ===== -->
+    <header class="cvt-header">
+      <div class="cvt-header-left">
+        <button class="cvt-burger d-lg-none" id="cvtBurger" aria-label="Ouvrir le menu">
+          <i class="fa-solid fa-bars"></i>
+        </button>
+      </div>
+
+      {% include 'includes/admin_header.html' %}
+    </header>
+
+    <!-- ===== CONTENT ===== -->
+    <main class="cvt-content">
+
+      <div class="cvt-page-title cvt-page-title-row">
+        <div>
+          <h1>Statistiques</h1>
+          <p>Analysez les performances et l'usage de la plateforme Convertly</p>
+        </div>
+        <div class="cvt-page-title-actions">
+          <div class="cvt-select cvt-filter-select" id="cvtPeriodSelectWrap">
+            <span id="cvtPeriodLabel">Cette semaine</span>
+            <i class="fa-solid fa-chevron-down"></i>
+            <select id="cvtPeriodSelect" aria-label="Choisir la période">
+              <option value="week">Cette semaine</option>
+              <option value="month">Ce mois</option>
+              <option value="year">Cette année</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== STAT CARDS ===== -->
+      <section class="cvt-stats-grid">
+        <div class="cvt-stat-card">
+          <div class="cvt-stat-top">
+            <div class="cvt-stat-icon cvt-icon-blue"><i class="fa-solid fa-arrows-rotate"></i></div>
+          </div>
+          <p class="cvt-stat-label">Total conversions</p>
+          <h2 class="cvt-stat-value" id="cvtStatTotal">{{ total_conversions }}</h2>
+        </div>
+
+        <div class="cvt-stat-card">
+          <div class="cvt-stat-top">
+            <div class="cvt-stat-icon cvt-icon-green"><i class="fa-solid fa-circle-check"></i></div>
+          </div>
+          <p class="cvt-stat-label">Taux de réussite</p>
+          <h2 class="cvt-stat-value" id="cvtStatSuccess">{{ success_rate }}%</h2>
+        </div>
+
+        <div class="cvt-stat-card">
+          <div class="cvt-stat-top">
+            <div class="cvt-stat-icon cvt-icon-violet"><i class="fa-solid fa-user-plus"></i></div>
+          </div>
+          <p class="cvt-stat-label">Nouveaux utilisateurs</p>
+          <h2 class="cvt-stat-value" id="cvtStatUsers">{{ new_users }}</h2>
+        </div>
+      </section>
+
+      <!-- ===== ROW A : EVOLUTION + REPARTITION STATUT ===== -->
+      <section class="cvt-row">
+
+        <div class="cvt-card cvt-col-main">
+          <div class="cvt-card-header">
+            <h3>Évolution des conversions</h3>
+            <div class="cvt-legend-inline">
+              <span><i class="cvt-dot" style="background:#2563EB"></i> Période actuelle</span>
+              <span><i class="cvt-dot" style="background:#CBD5E1"></i> Période précédente</span>
+            </div>
+          </div>
+          <div class="cvt-chart-wrap">
+            <canvas id="evolutionChart"></canvas>
+          </div>
+        </div>
+
+        <div class="cvt-card cvt-col-side">
+          <div class="cvt-card-header">
+            <h3>Répartition par statut</h3>
+          </div>
+          <div class="cvt-donut-layout cvt-donut-layout-vertical">
+            <div class="cvt-donut-chart-wrap">
+              <canvas id="statusChart"></canvas>
+              <div class="cvt-donut-center">
+                <strong>{{ success_rate }}%</strong>
+                <span>Réussite</span>
+              </div>
+            </div>
+            <div class="cvt-status-legend">
+              <div class="cvt-status-legend-row">
+                <span class="cvt-legend-label"><i class="cvt-dot" style="background:#16A34A"></i>Réussi</span>
+                <strong>{{ status_success }}</strong>
+              </div>
+              <div class="cvt-status-legend-row">
+                <span class="cvt-legend-label"><i class="cvt-dot" style="background:#DC2626"></i>Échec</span>
+                <strong>{{ status_failed }}</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- ===== ROW B : JOURS DE LA SEMAINE + FORMATS POPULAIRES ===== -->
+      <section class="cvt-row">
+
+        <div class="cvt-card cvt-col-main">
+          <div class="cvt-card-header">
+            <h3>Conversions par jour de la semaine</h3>
+          </div>
+          <div class="cvt-chart-wrap cvt-chart-wrap-sm">
+            <canvas id="weekdayChart"></canvas>
+          </div>
+        </div>
+
+        <div class="cvt-card cvt-col-side">
+          <div class="cvt-card-header">
+            <h3>Formats les plus utilisés</h3>
+          </div>
+          <div class="cvt-progress-list">
+          {% for format in formats_list %}
+            <div class="cvt-progress-item">
+              <div class="cvt-progress-top">
+                <span><span class="cvt-format-chip cvt-fmt-{{ format.name|lower }}">{{ format.name|upper }}</span> Conversions vers {{ format.name|upper }}</span>
+                <strong>{{ format.percentage }}%</strong>
+              </div>
+              <div class="cvt-progress-bar"><span style="--w:{{ format.percentage }}%; background:#2563EB;"></span></div>
+            </div>
+          {% endfor %}
+          {% if not formats_list %}
+            <div class="cvt-progress-item">
+              <div class="cvt-progress-top">
+                <span><span class="cvt-format-chip cvt-fmt-other">N/A</span> Aucune donnée</span>
+                <strong>0%</strong>
+              </div>
+              <div class="cvt-progress-bar"><span style="--w:0%; background:#CBD5E1;"></span></div>
+            </div>
+          {% endif %}
+          </div>
+        </div>
+
+      </section>
+
+      <!-- ===== ROW C : TOP UTILISATEURS + HEURES DE POINTE ===== -->
+      <section class="cvt-row cvt-row-reverse">
+
+        <div class="cvt-card cvt-col-side">
+          <div class="cvt-card-header">
+            <h3>Heures de pointe</h3>
+          </div>
+          <div class="cvt-chart-wrap cvt-chart-wrap-sm">
+            <canvas id="hoursChart"></canvas>
+          </div>
+        </div>
+
+        <div class="cvt-card cvt-col-main">
+          <div class="cvt-card-header">
+            <h3>Top utilisateurs</h3>
+            <a href="users.html" class="cvt-link">Voir tout</a>
+          </div>
+          <div class="cvt-table-wrap">
+            <table class="cvt-table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Utilisateur</th>
+                  <th>Conversions</th>
+                  <th>Taux de réussite</th>
+                  <th>Tendance</th>
+                </tr>
+              </thead>
+              <tbody>
+              {% for user in top_users %}
+                <tr>
+                  <td><span class="cvt-rank{% if loop.index == 1 %} cvt-rank-1{% elif loop.index == 2 %} cvt-rank-2{% elif loop.index == 3 %} cvt-rank-3{% endif %}">{{ loop.index }}</span></td>
+                  <td>
+                    <div class="cvt-user-cell">
+                      <img src="https://api.dicebear.com/7.x/initials/svg?seed={{ user.nom }}&backgroundColor=2563eb" alt="">
+                      <span>{{ user.nom }}</span>
+                    </div>
+                  </td>
+                  <td>{{ user.total_conversions }}</td>
+                  <td><span class="cvt-badge-status {% if user.success_rate >= 95 %}cvt-status-success{% elif user.success_rate >= 85 %}cvt-status-pending{% else %}cvt-status-danger{% endif %}">{{ user.success_rate }}%</span></td>
+                  <td class="cvt-trend-up"><i class="fa-solid fa-arrow-trend-up"></i> N/A</td>
+                </tr>
+              {% endfor %}
+              {% if not top_users %}
+                <tr>
+                  <td colspan="5" style="text-align: center; color: #94A3B8; padding: 20px;">Aucune donnée disponible</td>
+                </tr>
+              {% endif %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </section>
+
+    </main>
+  </div>
+</div>
+
+<script>
+  // Données du backend pour les graphiques
+  window.statisticsData = {
+    period: '{{ period }}',
+    evolutionLabels: {{ evolution_labels|tojson }},
+    evolutionCurrent: {{ evolution_current|tojson }},
+    evolutionPrevious: {{ evolution_previous|tojson }},
+    statusSuccess: {{ status_success }},
+    statusFailed: {{ status_failed }},
+    weekdayLabels: {{ weekday_labels|tojson }},
+    weekdayValues: {{ weekday_values|tojson }},
+    hoursLabels: {{ hours_labels|tojson }},
+    hoursValues: {{ hours_values|tojson }},
+    formatsList: {{ formats_list|tojson }}
+  };
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script src="{{ url_for('static', filename='js/statistics_admin.js') }}"></script>
+</body>
+</html>

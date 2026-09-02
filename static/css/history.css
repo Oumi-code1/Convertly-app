@@ -38,7 +38,7 @@ body {
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(12px);
   border-bottom: 1px solid #eef3f8;
-  padding: 18px 0;
+  padding: 10px 0;
   position: sticky;
   top: 0;
   z-index: 20;
@@ -63,14 +63,14 @@ body {
 }
 
 .logo-icon {
-  width: 64px;
-  height: 64px;
+  width: 70px;
+  height: 70px;
   object-fit: contain;
   border-radius: 16px;
 }
 
 .logo-text {
-  font-size: 1.85rem;
+  font-size: 1.8rem;
   font-weight: 800;
   color: #0f172a;
   letter-spacing: -0.5px;
@@ -202,13 +202,13 @@ body {
   background-color: #ffffff;
   border-radius: var(--radius-lg);
   padding: 12px 24px;
-  overflow-x: auto;
+  overflow-x: hidden;
 }
 
 .history-table {
   font-size: 0.95rem;
   width: 100%;
-  table-layout: fixed;
+  table-layout: auto;
   border-collapse: separate;
   border-spacing: 0;
 }
@@ -226,7 +226,6 @@ body {
   padding: 18px 12px;
   border-bottom: 1px solid #F5F5F5;
   vertical-align: middle;
-  white-space: nowrap;
 }
 
 .history-table tbody tr {
@@ -279,25 +278,76 @@ body {
   min-width: 110px;
 }
 
+/* ================= COLONNE FICHIER (icône + nom) =================
+   .file-cell est un <td> : on l'utilise comme conteneur flex interne
+   pour garder icône + nom sur la même ligne, sans casser la structure
+   de tableau (la ligne <tr> reste un vrai table-row).
+*/
 .file-cell {
+  min-width: 280px;
+  vertical-align: middle;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 12px;
-  font-weight: 500;
-  min-width: 0;
 }
 
-.file-cell i {
-  flex-shrink: 0;
+.file-icon {
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    background-color: #F1F5F9;
+}
+
+.file-icon i {
+    font-size: 18px;
+}
+
+.file-cell .file-icon {
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+/* Nom du fichier : affiché EN ENTIER, peut revenir à la ligne
+   si trop long (plus de troncature avec "..."). */
+.file-name {
+    display: inline-block;
+    flex: 1 1 auto;
+    min-width: 0;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    line-height: 1.35;
+    align-self: center;
 }
 
 .file-cell .file-name {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    word-break: break-word;
 }
 
-.file-icon-ppt { color: #d04423; }
+/* ================= COULEURS DES ICÔNES PAR TYPE =================
+   Important : le backend met la classe de couleur (file-icon-pdf,
+   file-icon-xls, etc.) directement sur le <i>, PAS sur le <div class="file-icon">.
+   On utilise :has() pour colorer le fond du <div> (le carré 36px)
+   à partir de la classe portée par son <i> enfant, sans toucher au HTML.
+   (:has() est supporté par Chrome/Edge/Safari récents et Firefox 121+) */
+
+/* Couleur du glyphe (icône elle-même) */
+.file-icon-pdf              { color: #DC2626; }
+.file-icon-docx,
+.file-icon-doc               { color: #2563EB; }
+.file-icon-image             { color: #16A34A; }
+.file-icon-xls               { color: #16A34A; }
+.file-icon-ppt                { color: #F97316; }
+.file-icon-default            { color: var(--primary-blue); }
+
+
 
 .conversion-cell,
 .size-cell,
@@ -319,15 +369,11 @@ body {
 }
 
 .status-success { background-color: #DCFCE7; color: #16A34A; }
-.status-pending { background-color: #FEF3C7; color: #D97706; }
 .status-failed  { background-color: #FEE2E2; color: #DC2626; }
 
 .actions-cell {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 8px;
-  flex-wrap: nowrap;
+  white-space: nowrap;
+  vertical-align: middle;
 }
 
 .action-form {
@@ -345,8 +391,14 @@ body {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  vertical-align: middle;
   transition: all 0.2s ease;
   padding: 0;
+}
+
+/* Petit espace entre le bouton Download et le bouton Delete */
+.actions-cell .icon-btn[data-action="download"] {
+  margin-right: 8px;
 }
 
 .icon-btn:hover {
@@ -374,10 +426,32 @@ body {
   color: var(--text-gray);
 }
 
+.back-link{
+    width:48px;
+    height:48px;
+    border-radius:50%;
+    background:#E8F2FF;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-decoration:none;
+    color:#111827;
+    transition:.2s;
+    flex-shrink:0;
+}
+
+.back-link:hover{
+    background:#D6E9FF;
+    transform:translateX(-2px);
+}
+
+.back-link i{
+    font-size:1.4rem;
+}
+
 /* ================= RESPONSIVE ================= */
 @media (max-width: 991.98px) {
   .page-body-flat {
     padding: 20px;
   }
 }
-

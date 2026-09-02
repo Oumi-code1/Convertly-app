@@ -1,0 +1,364 @@
+/* =========================================================
+   CONVERTLY — GESTION DES UTILISATEURS
+   Complète dashboard_admin.css (mêmes tokens :root)
+   ========================================================= */
+
+/* =========================================================
+   PAGE TITLE (avec bouton d'action à droite)
+   ========================================================= */
+.cvt-page-title-row{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+/* =========================================================
+   BOUTONS (communs)
+   ========================================================= */
+.cvt-btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap: 8px;
+  padding: 11px 20px;
+  border-radius: var(--cvt-radius-sm);
+  font-family: inherit;
+  font-size: 13.5px;
+  font-weight: 600;
+  border: 1px solid transparent;
+  cursor:pointer;
+  white-space: nowrap;
+  transition: background .15s ease, color .15s ease, border-color .15s ease, transform .15s ease;
+}
+.cvt-btn:active{ transform: scale(.97); }
+.cvt-btn-sm{ padding: 8px 14px; font-size: 12.5px; }
+
+.cvt-btn-primary{
+  background: var(--cvt-blue);
+  color:#fff;
+  box-shadow: 0 8px 16px -6px rgba(37,99,235,.45);
+}
+.cvt-btn-primary:hover{ background: var(--cvt-blue-dark); }
+
+.cvt-btn-ghost{
+  background: transparent;
+  color: var(--cvt-text-soft);
+  border-color: var(--cvt-border);
+}
+.cvt-btn-ghost:hover{ background: var(--cvt-bg); color: var(--cvt-text); }
+
+.cvt-btn-outline-danger{
+  background: transparent;
+  color: var(--cvt-red);
+  border-color: var(--cvt-red-bg);
+}
+.cvt-btn-outline-danger:hover{ background: var(--cvt-red-bg); }
+
+.cvt-btn-danger{
+  background: var(--cvt-red);
+  color:#fff;
+  box-shadow: 0 8px 16px -6px rgba(220,38,38,.4);
+}
+.cvt-btn-danger:hover{ background: #B91C1C; }
+
+/* =========================================================
+   CARTE UTILISATEURS + TOOLBAR
+   ========================================================= */
+.cvt-users-card{ padding: 22px; }
+
+.cvt-users-toolbar{
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  width: 100%;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.cvt-users-search{ max-width: 320px; }
+
+.cvt-toolbar-filters{
+  display:flex;
+  align-items:center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.cvt-filter-select{ min-width: 150px; justify-content: space-between; padding: 10px 12px; }
+
+.cvt-users-stats .cvt-stat-card {
+    min-height: 275px;
+}
+
+
+/* =========================================================
+   TABLE : cases à cocher, badges rôle, actions
+   ========================================================= */
+
+.cvt-user-cell-info{ display:flex; flex-direction:column; gap:1px; }
+.cvt-user-cell-name{ font-weight:600; font-size: 13.5px; color: var(--cvt-text);}
+.cvt-user-cell-mail{ font-size: 12px; color: var(--cvt-text-faint); }
+
+.cvt-status-neutral{ background:#F1F5F9; color: var(--cvt-text-soft); }
+
+.cvt-row-actions{
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap: 6px;
+}
+.cvt-icon-action{
+  width: 32px; height:32px;
+  border-radius: var(--cvt-radius-sm);
+  border: 1px solid var(--cvt-border);
+  background: var(--cvt-card);
+  color: var(--cvt-text-soft);
+  font-size: 13px;
+  cursor:pointer;
+  transition: background .15s ease, color .15s ease, border-color .15s ease;
+}
+.cvt-icon-action:hover{ background: var(--cvt-blue-light); color: var(--cvt-blue); border-color: rgba(37,99,235,.25); }
+.cvt-icon-action-danger:hover{ background: var(--cvt-red-bg); color: var(--cvt-red); border-color: rgba(220,38,38,.2); }
+
+/* =========================================================
+   EMPTY STATE
+   ========================================================= */
+.cvt-empty-state{
+  display:none;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap: 10px;
+  padding: 60px 20px;
+  color: var(--cvt-text-faint);
+  text-align:center;
+}
+.cvt-empty-state.cvt-visible{ display:flex; }
+.cvt-empty-state i{ font-size: 30px; color: var(--cvt-border); }
+.cvt-empty-state p{ margin:0; font-size: 13.5px; }
+
+/* =========================================================
+   PAGINATION
+   ========================================================= */
+.cvt-pagination{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding-top: 18px;
+  margin-top: 8px;
+  border-top: 1px solid var(--cvt-border);
+}
+.cvt-pagination-info{ font-size: 13px; color: var(--cvt-text-soft); }
+.cvt-pagination-controls{ display:flex; align-items:center; gap: 6px; }
+.cvt-page-btn{
+  min-width: 34px; height:34px;
+  padding: 0 8px;
+  border-radius: var(--cvt-radius-sm);
+  border: 1px solid var(--cvt-border);
+  background: var(--cvt-card);
+  color: var(--cvt-text-soft);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  cursor:pointer;
+  transition: background .15s ease, color .15s ease, border-color .15s ease;
+}
+.cvt-page-btn:hover:not(:disabled){ border-color: var(--cvt-blue); color: var(--cvt-blue); }
+.cvt-page-btn.active{ background: var(--cvt-blue); border-color: var(--cvt-blue); color:#fff; }
+.cvt-page-btn:disabled{ opacity:.4; cursor:not-allowed; }
+.cvt-page-dots{ color: var(--cvt-text-faint); padding: 0 2px; }
+
+/* =========================================================
+   FORMULAIRES (modales)
+   ========================================================= */
+.cvt-form-grid{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 22px;
+}
+.cvt-field{ display:flex; flex-direction:column; gap:7px; }
+.cvt-field-full{ grid-column: 1 / -1; }
+
+.cvt-field label{ font-size: 13px; font-weight: 600; color: var(--cvt-text); }
+
+.cvt-field input[type="text"],
+.cvt-field input[type="email"],
+.cvt-field input[type="password"],
+.cvt-field select{
+  width:100%;
+  border: 1px solid var(--cvt-border);
+  border-radius: var(--cvt-radius-sm);
+  padding: 11px 14px;
+  font-family: inherit;
+  font-size: 13.5px;
+  color: var(--cvt-text);
+  background: var(--cvt-card);
+  outline:none;
+  transition: border-color .15s ease, box-shadow .15s ease;
+}
+.cvt-field input:focus, .cvt-field select:focus{
+  border-color: var(--cvt-blue);
+  box-shadow: 0 0 0 4px rgba(37,99,235,.12);
+}
+
+.cvt-input-icon{ position:relative; display:flex; align-items:center; }
+.cvt-input-icon > i:first-child{
+  position:absolute; left: 14px;
+  color: var(--cvt-text-faint); font-size: 13px;
+}
+.cvt-input-icon input{ padding-left: 38px !important; }
+
+.cvt-form-actions{
+  display:flex;
+  justify-content:flex-end;
+  gap: 10px;
+}
+.cvt-form-actions-center{ justify-content:center; }
+
+/* =========================================================
+   MODALES
+   ========================================================= */
+.cvt-modal-overlay{
+  display:none;
+  position:fixed; inset:0;
+  background: rgba(15,23,42,.45);
+  backdrop-filter: blur(3px);
+  align-items:center;
+  justify-content:center;
+  padding: 20px;
+  z-index: 3000;
+}
+.cvt-modal-overlay.cvt-visible{ display:flex; animation: cvt-overlay-in .2s ease; }
+
+@keyframes cvt-overlay-in{
+  from{ opacity:0; }
+  to{ opacity:1; }
+}
+
+.cvt-modal{
+  background: var(--cvt-card);
+  border-radius: var(--cvt-radius-lg);
+  padding: 26px;
+  width: 100%;
+  max-width: 480px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 24px 60px -12px rgba(15,23,42,.35);
+  animation: cvt-modal-in .25s ease;
+}
+.cvt-modal-sm{ max-width: 400px; text-align:center; }
+
+@keyframes cvt-modal-in{
+  from{ opacity:0; transform: translateY(14px) scale(.98); }
+  to{ opacity:1; transform: translateY(0) scale(1); }
+}
+
+.cvt-modal-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom: 20px;
+}
+.cvt-modal-header h3{ margin:0; font-size: 17px; font-weight:700; }
+.cvt-modal-close{
+  width: 32px; height:32px;
+  border-radius: 50%;
+  border:none;
+  background: var(--cvt-bg);
+  color: var(--cvt-text-soft);
+  cursor:pointer;
+  transition: background .15s ease, color .15s ease;
+}
+.cvt-modal-close:hover{ background: var(--cvt-red-bg); color: var(--cvt-red); }
+
+.cvt-modal-icon-danger{
+  width: 56px; height:56px;
+  border-radius: 50%;
+  background: var(--cvt-red-bg);
+  color: var(--cvt-red);
+  display:flex; align-items:center; justify-content:center;
+  font-size: 22px;
+  margin: 4px auto 18px;
+}
+.cvt-modal-confirm-title{ margin: 0 0 8px; font-size: 17px; font-weight:700; }
+.cvt-modal-confirm-text{ margin: 0 0 22px; font-size: 13.5px; color: var(--cvt-text-soft); line-height:1.6; }
+
+/* =========================================================
+   TOAST
+   ========================================================= */
+.cvt-toast{
+  position: fixed;
+  bottom: 26px;
+  right: 26px;
+  display:flex;
+  align-items:center;
+  gap: 10px;
+  background: var(--cvt-text);
+  color:#fff;
+  padding: 14px 20px;
+  border-radius: var(--cvt-radius-sm);
+  font-size: 13.5px;
+  font-weight:500;
+  box-shadow: 0 12px 28px -8px rgba(15,23,42,.35);
+  transform: translateY(120%);
+  opacity:0;
+  transition: transform .3s ease, opacity .3s ease;
+  z-index: 4000;
+}
+.cvt-toast.cvt-visible{ transform: translateY(0); opacity:1; }
+.cvt-toast i{ color: var(--cvt-green); font-size: 15px; }
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+@media (max-width: 640px){
+  .cvt-form-grid{ grid-template-columns: 1fr; }
+  .cvt-users-toolbar{ flex-direction:column; align-items:stretch; }
+  .cvt-users-search{ max-width:none; }
+  .cvt-toolbar-filters{ justify-content:space-between; }
+  .cvt-pagination{ flex-direction:column; align-items:flex-start; }
+  .cvt-toast{ left: 16px; right: 16px; bottom: 16px; }
+  .cvt-page-title-row .cvt-btn{ width:100%; }
+}
+
+/* =========================================================
+   ALIGNEMENT DES COLONNES DU TABLEAU UTILISATEURS
+   ========================================================= */
+
+.cvt-users-table {
+    width: 100%;
+    table-layout: fixed;
+}
+
+/* Utilisateur */
+.cvt-users-table th:nth-child(1),
+.cvt-users-table td:nth-child(1) {
+    width: 34%;
+    text-align: left;
+}
+
+/* Statut */
+.cvt-users-table th:nth-child(2),
+.cvt-users-table td:nth-child(2) {
+    width: 18%;
+    text-align: left;
+}
+
+/* Date d'inscription */
+.cvt-users-table th:nth-child(3),
+.cvt-users-table td:nth-child(3) {
+    width: 25%;
+    text-align: left;
+}
+
+/* Actions */
+.cvt-users-table th:nth-child(4),
+.cvt-users-table td:nth-child(4) {
+    width: 23%;
+    text-align: right;
+}

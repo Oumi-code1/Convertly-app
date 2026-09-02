@@ -1,0 +1,173 @@
+/* =========================================================
+   CONVERTLY — STATISTIQUES
+   Complète dashboard_admin.css (mêmes tokens :root)
+   ========================================================= */
+
+.cvt-page-title-row{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.cvt-page-title-actions{
+  display:flex;
+  align-items:center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* =========================================================
+   BOUTONS
+   ========================================================= */
+.cvt-btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap: 8px;
+  padding: 11px 20px;
+  border-radius: var(--cvt-radius-sm);
+  font-family: inherit;
+  font-size: 13.5px;
+  font-weight: 600;
+  border: 1px solid transparent;
+  cursor:pointer;
+  white-space: nowrap;
+  transition: background .15s ease, color .15s ease, border-color .15s ease, transform .15s ease;
+}
+.cvt-btn:active{ transform: scale(.97); }
+.cvt-btn-ghost{
+  background: transparent;
+  color: var(--cvt-text-soft);
+  border-color: var(--cvt-border);
+}
+.cvt-btn-ghost:hover{ background: var(--cvt-bg); color: var(--cvt-text); }
+
+.cvt-filter-select{ min-width: 160px; justify-content: space-between; padding: 10px 14px; }
+
+/* =========================================================
+   ROWS (réutilise .cvt-row / .cvt-card / .cvt-col-main / .cvt-col-side
+   déjà définis dans dashboard_admin.css)
+   ========================================================= */
+.cvt-row-reverse{ grid-template-columns: 1fr 1.5fr; }
+.cvt-row-reverse .cvt-col-side{ order: 1; }
+.cvt-row-reverse .cvt-col-main{ order: 2; }
+
+.cvt-chart-wrap-sm{ height: 260px; }
+
+.cvt-legend-inline{
+  display:flex;
+  align-items:center;
+  gap: 16px;
+  font-size: 12px;
+  color: var(--cvt-text-soft);
+  flex-wrap: wrap;
+}
+.cvt-legend-inline span{ display:flex; align-items:center; gap:6px; }
+.cvt-dot{ width:8px; height:8px; border-radius:50%; display:inline-block; }
+
+/* =========================================================
+   DOUGHNUT STATUT (vertical, avec légende dessous)
+   ========================================================= */
+.cvt-donut-layout-vertical{
+  flex-direction: column;
+  align-items:center;
+  gap: 20px;
+}
+.cvt-status-legend{ width:100%; }
+.cvt-status-legend-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding: 10px 4px;
+  border-bottom: 1px solid var(--cvt-border);
+  font-size: 13.5px;
+}
+.cvt-status-legend-row:last-child{ border-bottom:none; }
+.cvt-status-legend-row strong{ font-weight:700; }
+.cvt-legend-label{ display:flex; align-items:center; gap:8px; color: var(--cvt-text-soft); font-weight:500; }
+
+/* =========================================================
+   FORMATS CHIPS (réutilisés depuis formats/history)
+   ========================================================= */
+.cvt-format-chip{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 10px;
+  font-weight: 700;
+  margin-right: 6px;
+}
+.cvt-fmt-docx{ background:#DBEAFE; color:#1D4ED8; }
+.cvt-fmt-pdf{ background:#FEE2E2; color:#DC2626; }
+.cvt-fmt-jpg{ background:#FEF3C7; color:#D97706; }
+.cvt-fmt-pptx{ background:#FFEDD5; color:#EA580C; }
+.cvt-fmt-xlsx{ background:#D1FAE5; color:#059669; }
+.cvt-fmt-other{ background:#F1F5F9; color:#64748B; }
+
+/* =========================================================
+   PROGRESS LIST (formats les plus utilisés)
+   ========================================================= */
+.cvt-progress-list{ display:flex; flex-direction:column; gap: 18px; }
+.cvt-progress-item{ display:flex; flex-direction:column; gap:8px; }
+.cvt-progress-top{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  font-size: 13px;
+  color: var(--cvt-text);
+  font-weight:500;
+}
+.cvt-progress-top strong{ font-weight:700; color: var(--cvt-text); }
+.cvt-progress-bar{
+  height: 8px;
+  border-radius: 999px;
+  background: var(--cvt-bg);
+  overflow:hidden;
+}
+.cvt-progress-bar span{
+  display:block;
+  height:100%;
+  width: 0%;
+  border-radius: 999px;
+  transition: width 1s cubic-bezier(.22,.9,.35,1);
+}
+.cvt-progress-bar span.cvt-filled{ width: var(--w); }
+
+/* =========================================================
+   TABLE : rang + tendance
+   ========================================================= */
+.cvt-rank{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width: 26px; height:26px;
+  border-radius: 8px;
+  background: var(--cvt-bg);
+  color: var(--cvt-text-soft);
+  font-size: 12.5px;
+  font-weight: 700;
+}
+.cvt-rank-1{ background: #FEF3C7; color:#B45309; }
+.cvt-rank-2{ background: #F1F5F9; color:#475569; }
+.cvt-rank-3{ background: #FFEDD5; color:#C2410C; }
+
+.cvt-trend-up{ color: var(--cvt-green); font-weight:600; font-size: 13px; }
+.cvt-trend-down{ color: var(--cvt-red); font-weight:600; font-size: 13px; }
+.cvt-trend-up i, .cvt-trend-down i{ margin-right: 5px; }
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+@media (max-width: 1200px){
+  .cvt-row-reverse{ grid-template-columns: 1fr; }
+  .cvt-row-reverse .cvt-col-side, .cvt-row-reverse .cvt-col-main{ order: initial; }
+}
+
+@media (max-width: 640px){
+  .cvt-page-title-actions{ width:100%; }
+  .cvt-page-title-actions .cvt-select,
+  .cvt-page-title-actions .cvt-btn{ flex:1; }
+}

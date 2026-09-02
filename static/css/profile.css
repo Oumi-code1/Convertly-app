@@ -33,7 +33,7 @@ body {
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(12px);
   border-bottom: 1px solid #eef3f8;
-  padding: 18px 0;
+  padding: 10px 0;
   position: sticky;
   top: 0;
   z-index: 20;
@@ -58,14 +58,14 @@ body {
 }
 
 .logo-icon {
-  width: 64px;
-  height: 64px;
+  width: 70px;
+  height: 70px;
   object-fit: contain;
   border-radius: 16px;
 }
 
 .logo-text {
-  font-size: 1.85rem;
+  font-size: 1.8rem;
   font-weight: 800;
   color: #0f172a;
   letter-spacing: -0.5px;
@@ -271,4 +271,308 @@ body {
  
 .btn-edit-profile.btn-editing {
   background-color: #16A34A;
+}
+
+.logout-btn{
+    background:#dc3545;
+    color:white;
+    padding:10px 18px;
+    border-radius:8px;
+    text-decoration:none;
+    transition:.3s;
+}
+
+.logout-btn:hover{
+    background:#bb2d3b;
+    color:white;
+}
+
+.profile-action-btn{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+
+    padding:14px 28px;
+
+    border:2px solid #60A5FA;
+    border-radius:999px;
+
+    background:#ffffff;
+    color:#3B82F6;
+
+    font-weight:600;
+    font-size:1rem;
+
+    text-decoration:none;
+
+    transition:all .3s ease;
+}
+
+.profile-action-btn:hover{
+    background:#93C5FD;
+    border-color:#93C5FD;
+    color:#fff;
+    transform:translateY(-2px);
+    box-shadow:0 8px 20px rgba(40,89,197,.20);
+}
+
+.profile-action-btn i{
+    color:inherit;
+    transition:.3s;
+    font-size:1.1rem;
+}
+
+.back-link{
+    width:48px;
+    height:48px;
+    border-radius:50%;
+    background:#E8F2FF;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-decoration:none;
+    color:#111827;
+    transition:.2s;
+    flex-shrink:0;
+}
+
+.back-link:hover{
+    background:#D6E9FF;
+    transform:translateX(-2px);
+}
+
+.back-link i{
+    font-size:1.4rem;
+}
+
+
+/* ==========================================================
+   MODALS
+========================================================== */
+
+.modal-content{
+    border:none;
+    border-radius:24px;
+    overflow:hidden;
+    box-shadow:0 18px 40px rgba(0,0,0,.12);
+    animation:modalFade .25s ease;
+}
+
+@keyframes modalFade{
+
+    from{
+        opacity:0;
+        transform:translateY(15px) scale(.96);
+    }
+
+    to{
+        opacity:1;
+        transform:translateY(0) scale(1);
+    }
+
+}
+
+.modal-header{
+    background:#EAF5FF;
+    border-bottom:1px solid #E5EEF8;
+    padding:22px 28px;
+}
+
+.modal-title{
+
+    font-size:2rem;
+
+    font-weight:700;
+
+    color:#1E293B;
+
+}
+
+.modal-body{
+
+    padding:30px;
+
+    background:#fff;
+
+}
+
+.modal-footer{
+
+    padding:22px 28px;
+
+    border-top:1px solid #EEF2F7;
+
+    background:white;
+
+}
+
+.btn-close{
+
+    font-size:1.2rem;
+
+    opacity:.8;
+
+}
+
+.btn-close:hover{
+
+    opacity:1;
+
+}
+
+.modal label{
+
+    font-weight:600;
+
+    margin-bottom:8px;
+
+    color:#1F2937;
+
+}
+
+.modal .form-control{
+
+    height:55px;
+
+    border-radius:18px;
+
+    border:2px solid #E3EAF5;
+
+    background:#F8FBFF;
+
+    box-shadow:none;
+
+    transition:.3s;
+
+}
+
+.modal .form-control:focus{
+
+    border-color:#2859C5;
+
+    background:white;
+
+    box-shadow:0 0 0 4px rgba(40,89,197,.12);
+
+}
+
+.modal input[type=file]{
+
+    border-radius:18px;
+
+    border:2px solid #E3EAF5;
+
+    background:#F8FBFF;
+
+    padding:12px;
+
+}
+
+.modal .btn-primary{
+
+    background:#2859C5;
+
+    border:none;
+
+    border-radius:14px;
+
+    padding:12px 28px;
+
+    font-weight:600;
+
+    transition:.3s;
+
+}
+
+.modal .btn-primary:hover{
+
+    background:#1D4ED8;
+
+    transform:translateY(-2px);
+
+}
+
+.modal .btn-secondary{
+
+    border-radius:14px;
+
+    padding:12px 28px;
+
+    font-weight:600;
+
+    transition:.3s;
+
+}
+
+.modal .btn-secondary:hover{
+
+    transform:translateY(-2px);
+
+}
+.logout-icon{
+
+    width:90px;
+
+    height:90px;
+
+    margin:0 auto 25px;
+
+    border-radius:50%;
+
+    background:#FFECEC;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+}
+
+.logout-icon i{
+
+    font-size:42px;
+
+    color:#DC3545;
+
+}
+
+#logoutModal h3{
+
+    font-size:2rem;
+
+    font-weight:700;
+
+    color:#111827;
+
+}
+
+#logoutModal p{
+
+    color:#6B7280;
+
+    font-size:17px;
+
+}
+@media(max-width:768px){
+
+.modal-dialog{
+
+    margin:15px;
+
+}
+
+.modal-title{
+
+    font-size:1.6rem;
+
+}
+
+.modal-body{
+
+    padding:20px;
+
+}
+
 }

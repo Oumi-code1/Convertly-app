@@ -3,18 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Convertly - Se connecter</title>
+    <title>Convertly - Nouveau mot de passe</title>
 
-    <!-- CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
-
-    <!-- Bootstrap -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet">
-
-    <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css">
-
-    <!-- Google Font -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 
@@ -23,7 +16,6 @@
 <main class="auth-wrapper">
     <div class="auth-card">
 
-        <!-- Logo -->
         <div class="text-center mb-3">
             <a href="{{ url_for('accueil') }}" aria-label="Retour à l'accueil" class="brand-link">
                 <img src="{{ url_for('static', filename='images/logoapp.png') }}"
@@ -32,73 +24,53 @@
             </a>
         </div>
 
-        <h2 class="auth-title text-center">Se connecter</h2>
+        <h2 class="auth-title text-center">Nouveau mot de passe</h2>
 
         <p class="auth-subtitle text-center">
-            Bienvenue de retour ! Connectez-vous à votre compte pour continuer.
+            Choisissez un nouveau mot de passe pour votre compte.
         </p>
 
-        <!-- FORM -->
-        <form class="login-form" method="POST" action="{{ url_for('login') }}">
+        <form class="login-form" method="POST" action="{{ url_for('reinitialiser_mot_de_passe') }}">
 
             <div class="mb-3">
-                <label class="auth-label">Adresse e-mail</label>
-
-                <div class="auth-input-group">
-                    <i class="bi bi-envelope"></i>
-
-                    <input
-                        type="email"
-                        name="email"
-                        class="form-control"
-                        placeholder="Entrez votre adresse e-mail"
-                        required>
-                </div>
-            </div>
-
-            <div class="mb-3">
-                <label class="auth-label">Mot de passe</label>
-
+                <label class="auth-label">Nouveau mot de passe</label>
                 <div class="auth-input-group">
                     <i class="bi bi-lock"></i>
-
                     <input
                         type="password"
-                        id="login-password"
-                        name="password"
+                        name="new_password"
                         class="form-control"
-                        placeholder="Entrez votre mot de passe"
+                        placeholder="Entrez votre nouveau mot de passe"
                         required>
-
                 </div>
             </div>
 
-            <!-- Message d'erreur JS -->
-            <div class="form-error"></div>
+            <div class="mb-3">
+                <label class="auth-label">Confirmer le mot de passe</label>
+                <div class="auth-input-group">
+                    <i class="bi bi-lock"></i>
+                    <input
+                        type="password"
+                        name="confirm_password"
+                        class="form-control"
+                        placeholder="Confirmez votre nouveau mot de passe"
+                        required>
+                </div>
+            </div>
 
-            <p class="text-end mb-4">
-                <a href="{{ url_for('mot_de_passe_oublie') }}" class="auth-link-small">
-                    Mot de passe oublié ?
-                </a>
-            </p>
+            {% if erreur %}
+            <div class="form-error visible">{{ erreur }}</div>
+            {% endif %}
 
             <button type="submit" class="btn-auth-submit">
-                <i class="bi bi-person-fill"></i>
-                Se connecter
+                <i class="bi bi-check-circle"></i>
+                Réinitialiser le mot de passe
             </button>
-
-            <p class="auth-footer-text text-center mt-4">
-                Vous n'avez pas de compte ?
-                <a href="{{ url_for('register') }}">S'inscrire</a>
-            </p>
 
         </form>
 
     </div>
 </main>
-
-<!-- JS -->
-<script src="{{ url_for('static', filename='js/login.js') }}"></script>
 
 </body>
 </html>

@@ -10,6 +10,23 @@ document.addEventListener('DOMContentLoaded', () => {
   const fileInput = document.querySelector('.upload-input');
   const convertBtn = document.querySelector('.btn-convert');
   const fileNameLabel = document.querySelector('.upload-filename');
+  const formatSelect = document.getElementById("format_cible");
+  const allowedFormats = {
+      PDF: ["DOCX"],
+      DOCX: ["PDF"],
+      XLSX: ["PDF"],
+      PPTX: ["PDF"],
+      TXT: ["PDF"],
+      PNG: ["JPG", "JPEG"],
+      JPG: ["PNG", "JPEG"],
+      JPEG: ["PNG", "JPG"],
+  };
+  
+  Array.from(formatSelect.options).forEach(option => {
+    if (option.value !== "") {
+        option.hidden = true;
+    }
+  });
 
   if (dropZone && fileInput) {
 
@@ -44,23 +61,36 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  function updateFormats(extension) {
+
+    Array.from(formatSelect.options).forEach(option => {
+
+        if (option.value === "") {
+            option.hidden = false;
+            return;
+        }
+
+        if (allowedFormats[extension]) {
+            option.hidden = !allowedFormats[extension].includes(option.text);
+        } else {
+            option.hidden = true;
+        }
+
+    });
+
+    formatSelect.value = "";
+  }
+
   function handleSelectedFile(file) {
     if (fileNameLabel) fileNameLabel.textContent = file.name;
-    const convertBtn = document.querySelector('.btn-convert');
+    
+    const extension = file.name.split(".").pop().toUpperCase();
+    
+    updateFormats(extension);
+    
     if (convertBtn) convertBtn.disabled = false;
   }
 
-  /* ---------- 2. Sélection du format de sortie ---------- */
-  const formatOptions = document.querySelectorAll('.format-option');
-  let selectedFormat = null;
-
-  formatOptions.forEach((option) => {
-    option.addEventListener('click', () => {
-      formatOptions.forEach((o) => o.classList.remove('selected'));
-      option.classList.add('selected');
-      selectedFormat = option.dataset.format;
-    });
-  });
 
   /* ---------- 3. Lancer la conversion (simulation) ---------- */
  /* ---------- 3. Envoyer le formulaire à Flask ---------- */
@@ -115,3 +145,4 @@ if (convertBtn && uploadForm) {
   });
 
 });
+ 

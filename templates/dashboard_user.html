@@ -41,34 +41,56 @@
 
 <!-- ============ MAIN SECTION ============ -->
 <main class="page-body">
-  <div class="container-fluid">
-    <div class="row mb-4">
-      <div class="col-12">
-        <nav class="top-navbar">
-          <ul class="top-nav list-unstyled d-flex flex-wrap align-items-center gap-2 mb-0">
-            <li class="top-nav-item active">
-              <a href="{{ url_for('dashboard_user') }}"><i class="bi bi-house-door-fill"></i><span>Tableau de bord</span></a>
-            </li>
-            <li class="top-nav-item">
-              <a href="{{ url_for('history') }}"><i class="bi bi-arrow-repeat"></i><span>Dernières conversions</span></a>
-            </li>
-            <li class="top-nav-item">
-              <a href="{{ url_for('documents_user') }}"><i class="bi bi-folder-fill text-warning"></i><span>Documents</span></a>
-            </li>
-            <li class="top-nav-item">
-              <a href="#"><i class="bi bi-image text-info"></i><span>Images</span></a>
-            </li>
-            <li class="top-nav-item">
-              <a href="#"><i class="bi bi-download text-primary"></i><span>Téléchargements</span></a>
-            </li>
-            <li class="top-nav-item">
-              <a href="#"><i class="bi bi-trash-fill text-success"></i><span>Corbeille</span></a>
-            </li>
-          </ul>
-        </nav>
-      </div>
-    </div>
-    <div class="row">
+<div class="container-fluid">
+<div class="row">
+    <!-- SIDEBAR -->
+    <aside class="col-lg-3 col-xl-2">
+        <div class="sidebar-card">
+
+            <ul class="sidebar-nav list-unstyled">
+
+                <li class="active">
+                    <a href="{{ url_for('dashboard_user') }}">
+                        <i class="bi bi-house-door-fill"></i>
+                        Tableau de bord
+                    </a>
+                </li>
+
+                <li>
+                    <a href="{{ url_for('history') }}">
+                        <i class="bi bi-arrow-repeat"></i>
+                        Historique des conversions 
+                    </a>
+                </li>
+
+                <li class="sidebar-separator">
+                    <span>Compte</span>
+                </li>
+
+                <li>
+                    <a href="{{ url_for('profile') }}">
+                        <i class="bi bi-person-circle"></i>
+                        Mon profil
+                    </a>
+                </li>
+
+                <li>
+                  <a href="{{ url_for('logout') }}" class="logout-btn">
+
+                    <i class="bi bi-box-arrow-right"></i>
+                    Déconnexion
+                  </a>
+                </li>
+
+            </ul>
+
+
+        </div>
+    </aside>
+
+    <!-- CONTENU -->
+
+    <section class="col-lg-9 col-xl-10">
       <!-- ============ CONTENT ============ -->
       <section class="col-12">
         <div class="content-card">
@@ -78,48 +100,6 @@
             <div>
               <h2 class="page-title mb-1">Tableau de bord</h2>
               <p class="page-subtitle">Gérez vos conversions et vos fichiers en toute simplicité.</p>
-            </div>
-          </div>
-
-          <!-- Stat cards -->
-          <div class="row g-4 mb-4">
-            <div class="col-md-4">
-              <div class="stat-card">
-                <div class="stat-header">
-                  <h6 class="stat-label">Fichiers convertis</h6>
-                  <i class="bi bi-file-earmark-fill stat-icon icon-blue"></i>
-                </div>
-                <div class="stat-body">
-                  <span class="stat-value"><span class="stat-number" data-value="{{ stats.files_converted }}">{{ stats.files_converted }}</span></span>
-                </div>
-              </div>
-            </div>
-            <div class="col-md-4">
-              <div class="stat-card">
-                <div class="stat-header">
-                  <h6 class="stat-label">Téléchargement</h6>
-                  <span class="icon-circle icon-circle-green">
-                    <i class="bi bi-arrow-down"></i>
-                  </span>
-                </div>
-                <div class="stat-body">
-                  <span class="stat-value"><span class="stat-number" data-value="{{ stats.total_downloads }}">{{ stats.total_downloads }}</span></span>
-                </div>
-              </div>
-            </div>
-            <div class="col-md-4">
-              <div class="stat-card">
-                <div class="stat-header">
-                  <h6 class="stat-label">Conversions</h6>
-                  <span class="icon-circle icon-circle-yellow">
-                    <i class="bi bi-clock-fill"></i>
-                  </span>
-                </div>
-                <div class="stat-body">
-                  <span class="stat-value"><span class="stat-number" data-value="{{ stats.conversions_today }}">{{ stats.conversions_today }}</span></span>
-                  <span class="stat-sub">Aujourd'hui</span>
-                </div>
-              </div>
             </div>
           </div>
 
@@ -181,6 +161,48 @@
             </div>
           </div>
 
+          <!-- Stat cards -->
+          <div class="row g-4 mb-4">
+            <div class="col-md-4">
+              <div class="stat-card">
+                <div class="stat-header">
+                  <h6 class="stat-label">Fichiers convertis</h6>
+                  <i class="bi bi-file-earmark-fill stat-icon icon-blue"></i>
+                </div>
+                <div class="stat-body">
+                  <span class="stat-value"><span class="stat-number" data-value="{{ stats.files_converted }}">{{ stats.files_converted }}</span></span>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="stat-card">
+                <div class="stat-header">
+                  <h6 class="stat-label">Téléchargement</h6>
+                  <span class="icon-circle icon-circle-green">
+                    <i class="bi bi-arrow-down"></i>
+                  </span>
+                </div>
+                <div class="stat-body">
+                  <span class="stat-value"><span class="stat-number" data-value="{{ stats.total_downloads }}">{{ stats.total_downloads }}</span></span>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="stat-card">
+                <div class="stat-header">
+                  <h6 class="stat-label">Conversions</h6>
+                  <span class="icon-circle icon-circle-yellow">
+                    <i class="bi bi-clock-fill"></i>
+                  </span>
+                </div>
+                <div class="stat-body">
+                  <span class="stat-value"><span class="stat-number" data-value="{{ stats.conversions_today }}">{{ stats.conversions_today }}</span></span>
+                  <span class="stat-sub">Aujourd'hui</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <!-- Recent conversions -->
           <div class="recent-card">
             <div class="d-flex justify-content-between align-items-center mb-3">
@@ -218,6 +240,31 @@
     </div>
   </div>
 </main>
+
+{% if show_conversion_modal %}
+<div class="modal fade show d-block" id="conversionSuccessModal" tabindex="-1" role="dialog" aria-modal="true" aria-labelledby="conversionSuccessModalLabel" style="display: block;">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow-lg" style="border-radius: 24px; overflow: hidden;">
+      <div class="modal-header border-0 pb-0">
+        <button type="button" class="btn-close ms-auto" onclick="window.location.href='{{ url_for('dashboard_user') }}'" aria-label="Fermer"></button>
+      </div>
+      <div class="modal-body text-center py-4 px-4">
+        <div class="mb-3" style="font-size: 3rem;">
+          <i class="bi bi-check-circle-fill text-success"></i>
+        </div>
+        <h5 class="modal-title fw-bold" id="conversionSuccessModalLabel">Conversion terminée avec succès !</h5>
+        <p class="text-muted mt-3 mb-4">
+          <strong>Fichier :</strong> {{ conversion_file_name or 'Fichier converti' }}
+        </p>
+        <a href="{{ url_for('download_conversion', id_conversion=conversion_id) if conversion_id else '#' }}" class="btn btn-convert">
+          <i class="bi bi-download me-2"></i> Télécharger
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal-backdrop fade show"></div>
+{% endif %}
 
 <script src="{{ url_for('static', filename='js/dashboard_user.js') }}"></script>
 </body>

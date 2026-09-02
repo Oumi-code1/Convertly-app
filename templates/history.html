@@ -36,15 +36,21 @@
   </div>
 </header>
 
+
 <!-- ============ MAIN SECTION ============ -->
 <main class="page-body page-body-flat">
   <div class="container-fluid">
-
     <!-- Titre de page -->
     <div class="page-heading-row">
+
+      <a href="{{ url_for('dashboard_user') }}" class="back-link">
+        <i class="bi bi-arrow-left"></i>
+      </a>
+
       <span class="page-heading-icon">
         <i class="bi bi-arrow-repeat"></i>
       </span>
+
       <h2 class="page-title mb-0">Historique des conversions</h2>
     </div>
 
@@ -55,9 +61,6 @@
       </button>
       <button class="filter-pill" data-filter="success">
         <i class="bi bi-check-circle-fill text-success"></i> Réussi
-      </button>
-      <button class="filter-pill" data-filter="pending">
-        <i class="bi bi-clock-fill text-warning"></i> En attente
       </button>
       <button class="filter-pill" data-filter="failed">
         <i class="bi bi-x-circle-fill text-danger"></i> Échec
@@ -82,13 +85,18 @@
             {% for conversion in history_conversions %}
             <tr class="history-row" data-status="{{ conversion.status_filter }}">
               <td class="file-cell">
-                <i class="{{ conversion.file_icon_class }}"></i>
-                <span class="file-name">{{ conversion.file_name }}</span>
+                  <div class="file-icon">
+                      <i class="{{ conversion.file_icon_class }}"></i>
+                  </div>
+
+                  <span class="file-name">
+                      {{ conversion.file_name }}
+                  </span>
               </td>
               <td class="conversion-cell">{{ conversion.source_format }} &rarr; {{ conversion.target_format }}</td>
               <td class="size-cell">{{ conversion.file_size }}</td>
               <td class="date-cell">{{ conversion.date_conversion }}</td>
-              <td class="status-cell"><span class="status-pill {{ conversion.status_class }}"><i class="bi {% if conversion.status_filter == 'success' %}bi-check-circle-fill{% elif conversion.status_filter == 'pending' %}bi-clock-fill{% else %}bi-x-circle-fill{% endif %}"></i> {{ conversion.status_label }}</span></td>
+              <td class="status-cell"><span class="status-pill {{ conversion.status_class }}"><i class="bi {% if conversion.status_filter == 'success' %}bi-check-circle-fill{% else %}bi-x-circle-fill{% endif %}"></i> {{ conversion.status_label }}</span></td>
               <td class="actions-cell">
                 {% if conversion.can_download %}
                 <button type="button" class="icon-btn icon-btn-blue" data-action="download" onclick="window.location.href='{{ conversion.download_url }}'"><i class="bi bi-download"></i></button>

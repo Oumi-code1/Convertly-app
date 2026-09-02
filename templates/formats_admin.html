@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Convertly — Gérer les formats de conversion</title>
+
+<!-- Google Fonts : Poppins -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<!-- Bootstrap 5 -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+<!-- Base shell (sidebar / header / stat-cards) -->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard_admin.css') }}">
+<!-- Formats page styles -->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/formats_admin.css') }}">
+</head>
+<body>
+
+<div class="cvt-app">
+
+  <!-- ============ SIDEBAR ============ -->
+  <aside class="cvt-sidebar" id="cvtSidebar">
+    <div class="cvt-sidebar-header">
+      <div class="cvt-logo">
+        <img src="{{ url_for('static', filename='images/logoapp.png') }}"  class="cvt-logo-img">
+        <span class="cvt-logo-text">Convertly</span>
+      </div>
+      <button class="cvt-sidebar-toggle d-lg-none" id="cvtSidebarClose" aria-label="Fermer le menu">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+
+    <nav class="cvt-nav">
+      <a href="{{ url_for('dashboard_admin') }}" class="cvt-nav-link" data-nav="dashboard">
+        <i class="fa-solid fa-house cvt-nav-icon"></i>
+        <span>Dashboard</span>
+      </a>
+
+      <p class="cvt-nav-label">Gestion</p>
+
+      <a href="{{ url_for('users_admin') }}" class="cvt-nav-link" data-nav="utilisateurs">
+        <i class="fa-solid fa-users cvt-nav-icon"></i>
+        <span>Utilisateurs</span>
+      </a>
+      <a href="{{ url_for('formats_admin') }}" class="cvt-nav-link active" data-nav="formats">
+        <i class="fa-solid fa-file-arrow-down cvt-nav-icon"></i>
+        <span>Formats conversion</span>
+      </a>
+      <a href="{{ url_for('history_admin') }}" class="cvt-nav-link" data-nav="historique">
+        <i class="fa-solid fa-clock-rotate-left cvt-nav-icon"></i>
+        <span>Historique global</span>
+      </a>
+
+      <p class="cvt-nav-label">Analyse</p>
+
+      <a href="{{ url_for('statistics_admin') }}" class="cvt-nav-link" data-nav="statistiques">
+        <i class="fa-solid fa-chart-simple cvt-nav-icon"></i>
+        <span>Statistiques</span>
+      </a>
+
+      <p class="cvt-nav-label">Paramètres</p>
+
+      <a href="{{ url_for('profile_admin') }}" class="cvt-nav-link" data-nav="profil">
+        <i class="fa-solid fa-user-gear cvt-nav-icon"></i>
+        <span>Mon profil</span>
+      </a>
+    </nav>
+  </aside>
+
+  <div class="cvt-sidebar-overlay" id="cvtOverlay"></div>
+
+  <!-- ============ MAIN ============ -->
+  <div class="cvt-main">
+
+    <!-- ===== HEADER ===== -->
+    <header class="cvt-header">
+      <div class="cvt-header-left">
+        <button class="cvt-burger d-lg-none" id="cvtBurger" aria-label="Ouvrir le menu">
+          <i class="fa-solid fa-bars"></i>
+        </button>
+      </div>
+
+      {% include 'includes/admin_header.html' %}
+    </header>
+
+    <!-- ===== CONTENT ===== -->
+    <main class="cvt-content">
+
+      <div class="cvt-page-title cvt-page-title-row">
+        <div>
+          <h1>Gérer les formats de conversion</h1>
+          <p>Ajoutez, activez ou modifiez les formats disponibles sur la plateforme</p>
+        </div>
+        <button class="cvt-btn cvt-btn-primary" id="cvtAddFormatBtn" type="button">
+          <i class="fa-solid fa-plus"></i> Ajouter un format
+        </button>
+      </div>
+
+      <!-- ===== STAT CARDS ===== -->
+      <section class="cvt-stats-grid">
+        <div class="cvt-stat-card">
+          <div class="cvt-stat-top">
+            <div class="cvt-stat-icon cvt-icon-blue"><i class="fa-solid fa-file-lines"></i></div>
+          </div>
+          <p class="cvt-stat-label">Formats disponibles</p>
+          <h2 class="cvt-stat-value">{{ formats_disponibles }}</h2>
+        </div>
+
+        <div class="cvt-stat-card">
+          <div class="cvt-stat-top">
+            <div class="cvt-stat-icon cvt-icon-green"><i class="fa-solid fa-toggle-on"></i></div>
+          </div>
+          <p class="cvt-stat-label">Formats actifs</p>
+          <h2 class="cvt-stat-value">{{ formats_actifs }}</h2>
+        </div>
+
+        <div class="cvt-stat-card">
+          <div class="cvt-stat-top">
+            <div class="cvt-stat-icon cvt-icon-violet"><i class="fa-solid fa-arrows-rotate"></i></div>
+          </div>
+          <p class="cvt-stat-label">Conversions ce mois</p>
+          <h2 class="cvt-stat-value">{{ conversions_ce_mois }}</h2>
+        </div>
+
+        <div class="cvt-stat-card">
+          <div class="cvt-stat-top">
+            <div class="cvt-stat-icon cvt-icon-orange"><i class="fa-solid fa-star"></i></div>
+          </div>
+          <p class="cvt-stat-label">Format le plus utilisé</p>
+          <h2 class="cvt-stat-value cvt-stat-value-sm">{{ format_origine|upper }} → {{ format_cible|upper }}</h2>
+        </div>
+      </section>
+
+      <!-- ===== TOOLBAR ===== -->
+      <section class="cvt-card cvt-formats-toolbar-card">
+        <div class="cvt-users-toolbar">
+          <div class="cvt-search cvt-users-search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" id="cvtFormatSearch" placeholder="Rechercher un format (ex : PDF, DOCX...)">
+          </div>
+
+          <div class="cvt-toolbar-filters">
+            <div class="cvt-select cvt-filter-select">
+              <span id="cvtCategoryFilterLabel">Toutes les catégories</span>
+              <i class="fa-solid fa-chevron-down"></i>
+              <select id="cvtCategoryFilter" aria-label="Filtrer par catégorie">
+                <option value="">Toutes les catégories</option>
+                <option value="Document">Document</option>
+                <option value="Image">Image</option>
+              </select>
+            </div>
+
+            <div class="cvt-select cvt-filter-select">
+              <span id="cvtStatusFilterLabel">Tous les statuts</span>
+              <i class="fa-solid fa-chevron-down"></i>
+              <select id="cvtStatusFilter" aria-label="Filtrer par statut">
+                <option value="">Tous les statuts</option>
+                <option value="Actif">Actif</option>
+                <option value="Inactif">Inactif</option>
+              </select>
+            </div>
+
+            <div class="cvt-view-toggle" role="group" aria-label="Mode d'affichage">
+              <button class="cvt-view-btn active" id="cvtViewGrid" type="button" aria-label="Vue grille"><i class="fa-solid fa-table-cells-large"></i></button>
+              <button class="cvt-view-btn" id="cvtViewList" type="button" aria-label="Vue liste"><i class="fa-solid fa-list"></i></button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== GRILLE DES FORMATS ===== -->
+      <section class="cvt-formats-grid" id="cvtFormatsGrid">
+
+          {% for conversion in conversions_formats %}
+          <article
+              class="cvt-format-card{% if conversion.origine_actif == 0 or conversion.cible_actif == 0 %} cvt-format-card-inactive{% endif %}"
+              data-name="{{ conversion.format_origine|lower }} {{ conversion.format_cible|lower }}"
+              data-status="{% if conversion.origine_actif == 1 and conversion.cible_actif == 1 %}Actif{% else %}Inactif{% endif %}"
+          >
+              <!-- ===== FORMAT ORIGINE → FORMAT CIBLE ===== -->
+              <div class="cvt-format-card-top">
+                  <div class="cvt-format-pair">
+                      <!-- Format origine -->
+                      <span class="cvt-format-chip cvt-fmt-{{ conversion.format_origine|lower }}">
+                          {{ conversion.format_origine|upper }}
+                      </span>
+                      <i class="fa-solid fa-arrow-right-long"></i>
+                      <!-- Format cible -->
+                      <span class="cvt-format-chip cvt-fmt-{{ conversion.format_cible|lower }}">
+                          {{ conversion.format_cible|upper }}
+                      </span>
+                      <!-- Toggle -->
+                      <label class="cvt-switch cvt-switch-sm">
+                          <input
+                              type="checkbox"
+                              class="cvt-format-toggle"
+                              data-origin="{{ conversion.format_origine }}"
+                              data-target="{{ conversion.format_cible }}"
+                              {% if conversion.origine_actif == 1 and conversion.cible_actif == 1 %}
+                                  checked
+                              {% endif %}
+                          >
+                          <span class="cvt-switch-slider"></span>
+                      </label>
+                  </div>
+              </div>
+              <!-- ===== TITRE ===== -->
+              <h3 class="cvt-format-title">
+                  {{ conversion.format_origine|upper }}
+                  vers
+                  {{ conversion.format_cible|upper }}
+
+              </h3>
+              <!-- ===== CATÉGORIE ===== -->
+              {% if conversion.format_origine|upper in ['PNG', 'JPG', 'JPEG'] 
+                    or conversion.format_cible|upper in ['PNG', 'JPG', 'JPEG'] %}
+
+                  <span class="cvt-category-badge cvt-cat-image">
+                      <i class="fa-solid fa-image"></i>
+                      Image
+                  </span>
+
+              {% else %}
+                  <span class="cvt-category-badge cvt-cat-document">
+                      <i class="fa-solid fa-file-lines"></i>
+                      Document
+                  </span>
+              {% endif %}
+              <!-- ===== FOOTER ===== -->
+              <div class="cvt-format-footer">
+                  <span class="cvt-format-usage">
+                      <i class="fa-solid fa-arrows-rotate"></i>
+                      {{ conversion.nb_conversions }} conversions
+                  </span>
+                  <!-- Actions -->
+                  <div class="cvt-row-actions">
+
+                      <button
+                          class="cvt-icon-action"
+                          title="Modifier"
+                          data-action="edit"
+                          data-origin="{{ conversion.format_origine }}"
+                          data-target="{{ conversion.format_cible }}"
+                      >
+
+                          <i class="fa-regular fa-pen-to-square"></i>
+
+                      </button>
+
+
+                      <button
+                          class="cvt-icon-action cvt-icon-action-danger"
+                          title="Supprimer"
+                          data-action="delete"
+                          data-origin="{{ conversion.format_origine }}"
+                          data-target="{{ conversion.format_cible }}"
+                      >
+
+                          <i class="fa-regular fa-trash-can"></i>
+
+                      </button>
+
+                  </div>
+
+              </div>
+
+          </article>
+
+          {% endfor %}
+
+      </section>
+
+
+      <!-- ===== EMPTY STATE ===== -->
+      <div class="cvt-empty-state" id="cvtEmptyState">
+          <i class="fa-solid fa-file-circle-xmark"></i>
+          <p>Aucun format ne correspond à votre recherche</p>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<!-- ============ MODAL : AJOUTER / MODIFIER UN FORMAT ============ -->
+<div class="cvt-modal-overlay" id="cvtFormatModalOverlay">
+  <div class="cvt-modal">
+    <div class="cvt-modal-header">
+      <h3 id="cvtFormatModalTitle">Ajouter un format</h3>
+      <button class="cvt-modal-close" id="cvtFormatModalClose" aria-label="Fermer"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+
+    <form class="cvt-form" id="cvtFormatForm">
+      <div class="cvt-form-grid">
+        <div class="cvt-field">
+          <label for="cvtFormatSource">Format source</label>
+          <input type="text" id="cvtFormatSource" placeholder="Ex : DOCX" maxlength="6" required>
+        </div>
+        <div class="cvt-field">
+          <label for="cvtFormatTarget">Format cible</label>
+          <input type="text" id="cvtFormatTarget" placeholder="Ex : PDF" maxlength="6" required>
+        </div>
+        <div class="cvt-field cvt-field-full">
+          <label for="cvtFormatTitle">Nom affiché</label>
+          <input type="text" id="cvtFormatTitle" placeholder="Ex : Word vers PDF" required>
+        </div>
+        <div class="cvt-field">
+          <label for="cvtFormatCategory">Catégorie</label>
+          <select id="cvtFormatCategory">
+            <option>Document</option>
+            <option>Image</option>
+          </select>
+        </div>
+        <div class="cvt-field">
+          <label for="cvtFormatStatus">Statut</label>
+          <select id="cvtFormatStatus">
+            <option>Actif</option>
+            <option>Inactif</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="cvt-form-actions">
+        <button type="button" class="cvt-btn cvt-btn-ghost" id="cvtFormatModalCancel">Annuler</button>
+        <button type="submit" class="cvt-btn cvt-btn-primary" id="cvtFormatModalSubmit">
+          <i class="fa-solid fa-check"></i> Ajouter le format
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ============ MODAL : CONFIRMATION SUPPRESSION ============ -->
+<div class="cvt-modal-overlay" id="cvtDeleteModalOverlay">
+  <div class="cvt-modal cvt-modal-sm">
+    <div class="cvt-modal-icon-danger"><i class="fa-solid fa-triangle-exclamation"></i></div>
+    <h3 class="cvt-modal-confirm-title">Supprimer ce format ?</h3>
+    <p class="cvt-modal-confirm-text">
+      Vous êtes sur le point de supprimer <strong id="cvtDeleteFormatName">ce format</strong>.
+      Les utilisateurs ne pourront plus l'utiliser pour convertir leurs fichiers.
+    </p>
+    <div class="cvt-form-actions cvt-form-actions-center">
+      <button type="button" class="cvt-btn cvt-btn-ghost" id="cvtDeleteModalCancel">Annuler</button>
+      <button type="button" class="cvt-btn cvt-btn-danger" id="cvtDeleteModalConfirm">
+        <i class="fa-solid fa-trash"></i> Supprimer
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast de confirmation -->
+<div class="cvt-toast" id="cvtToast">
+  <i class="fa-solid fa-circle-check"></i>
+  <span id="cvtToastMsg">Modifications enregistrées</span>
+</div>
+
+<script src="{{ url_for('static', filename='js/formats_admin.js') }}"></script>
+</body>
+</html>

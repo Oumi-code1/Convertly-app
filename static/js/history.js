@@ -57,17 +57,14 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  historyTable.querySelectorAll('.icon-btn-red[data-action="delete"]').forEach((btn) => {
-    btn.addEventListener('click', () => {
-      const row = btn.closest('tr');
-      if (!row) return;
+  historyTable.querySelectorAll('.action-form').forEach((form) => {
+    form.addEventListener('submit', function (e) {
 
-      const confirmDelete = confirm('Supprimer cette conversion de l\'historique ?');
-      if (confirmDelete) {
-        row.remove();
-        rows.splice(rows.indexOf(row), 1);
-        applyFilter(document.querySelector('.filter-pill.active')?.dataset.filter || 'all');
-      }
+        const confirmDelete = confirm("Supprimer cette conversion de l'historique ?");
+
+        if (!confirmDelete) {
+            e.preventDefault();
+        }
     });
   });
 
